@@ -6,9 +6,10 @@ emacs-direnv
 
 this package provides direnv_ integration for emacs.
 
-this packages runs ``direnv``
-to obtain the environment for the current file,
-and updates the emacs variables
+it works by invoking
+``direnv`` to obtain the environment
+for the current file,
+then updating the emacs variables
 ``process-environment`` and ``exec-path``.
 
 the result is that
@@ -21,13 +22,20 @@ with the correct environment variables set.
 usage
 =====
 
-the easiest way to use this package
-is to enable the global minor mode ``direnv-mode``,
-which automatically updates the emacs environment
+the command ``direnv-update-environment``
+updates the current environment
+so that it matches the current file.
+
+the global minor mode ``direnv-mode`` does the same,
+but automatically updates the emacs environment
 when the active buffer changes.
 
-to enable ``direnv-mode`` when emacs starts,
-put this in ``~/.emacs/init.el``::
+the easiest way to use this package
+is to enable ``direnv-mode``
+when emacs starts
+by putting this in ``~/.emacs/init.el``:
+
+.. code-block:: elisp
 
   (direnv-mode)
 
@@ -61,6 +69,8 @@ so this is not going to work without upfront coordination :(
 
 alternatively, put the elisp file
 somewhere in the loading path
-and load it explicitly::
+and load it explicitly:
+
+.. code-block:: elisp
 
   (require 'direnv)
