@@ -15,6 +15,9 @@
 
 ;;; Code:
 
+
+(require 'with-editor)
+
 (defvar direnv--output-buffer-name " *direnv*"
   "Name of the hidden buffer used for direnv interaction.")
 
