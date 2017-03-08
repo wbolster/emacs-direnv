@@ -74,3 +74,9 @@ and load it explicitly:
 .. code-block:: elisp
 
   (require 'direnv)
+
+also make sure
+that the direnv version (``direnv version``)
+is at least 2.8.0
+since this package uses
+the json export capabilities (``direnv export json``).
