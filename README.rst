@@ -2,8 +2,11 @@
 emacs-direnv
 ============
 
-![melpa badge](https://melpa.org/packages/direnv-badge.svg)
-![melpa stable badge](https://stable.melpa.org/packages/direnv-badge.svg)
+.. image:: https://melpa.org/packages/direnv-badge.svg
+   :alt: melpa badge
+
+.. image:: https://stable.melpa.org/packages/direnv-badge.svg
+   :alt: melpa stable badge
 
 .. _direnv: https://direnv.net/
 
