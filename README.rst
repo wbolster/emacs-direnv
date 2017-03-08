@@ -64,9 +64,6 @@ installation
 
   M-x package-install RET direnv RET
 
-fixme: there is already another direnv package on melpa
-so this is not going to work without upfront coordination :(
-
 alternatively, put the elisp file
 somewhere in the loading path
 and load it explicitly:
