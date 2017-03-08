@@ -15,7 +15,7 @@
 
 ;;; Code:
 
-
+(require 'json)
 (require 'with-editor)
 
 (defvar direnv--output-buffer-name " *direnv*"
