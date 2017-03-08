@@ -2,6 +2,9 @@
 emacs-direnv
 ============
 
+![melpa badge](https://melpa.org/packages/direnv-badge.svg)
+![melpa stable badge](https://stable.melpa.org/packages/direnv-badge.svg)
+
 .. _direnv: https://direnv.net/
 
 this package provides direnv_ integration for emacs.
