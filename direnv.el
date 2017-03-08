@@ -1,7 +1,7 @@
 ;;; direnv.el --- direnv support for emacs
 
 ;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
-;; Version: 1.0.0
+;; Version: 1.0.1
 ;; Package-Requires: ((emacs "24.4") (with-editor "2.5.10"))
 ;; Keywords: direnv, environment
 ;; URL: https://github.com/wbolster/emacs-direnv
