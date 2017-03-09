@@ -107,3 +107,19 @@ contributing
 praise? complaints? bugs? questions? ideas?
 
 please use the github issue tracker.
+
+
+credits
+=======
+
+this emacs package was created by
+`wouter bolsterlee (@wbolster)
+<https://github.com/wbolster>`_.
+
+it incorporates ideas from earlier
+packages created by
+`jonathan lange (@jml)
+<https://github.com/jml>`_
+and
+`christian romney (@christianromney)
+<https://github.com/christianromney>`_.
