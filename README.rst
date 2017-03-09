@@ -53,6 +53,32 @@ it edits the ``.envrc`` file
 associated with the current directory
 or one of its parent directories.
 
+configuration
+=============
+
+to avoid visual distraction,
+no summary messages are displayed in the minibuffer
+when ``direnv-mode`` automatically changes the environment,
+since the environment may change on every buffer switch.
+if you prefer to see the summary message anyway,
+change the ``direnv-always-show-summary`` variable::
+
+  (setq direnv-always-show-summary t)
+
+by default, the summary message also contains
+the paths of the old and new directories,
+which may be a bit too verbose for your taste.
+the ``direnv-show-paths-in-summary`` variable
+controls whether the summary includes path names.
+to get shorter summary messages, use::
+
+  (setq direnv-show-paths-in-summary nil)
+
+these setting can also be changed
+using the customize interface::
+
+  M-x customize-group RET direnv RET
+
 installation
 ============
 
