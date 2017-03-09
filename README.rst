@@ -29,39 +29,26 @@ usage
 =====
 
 the command ``direnv-update-environment``
-updates the current environment
-so that it matches the current file.
+provides the core functionality of this package:
+it updates the emacs environment
+to the direnv environment for the current file.
 
 the global minor mode ``direnv-mode`` does the same,
 but automatically updates the emacs environment
-when the active buffer changes.
-
-the easiest way to use this package
-is to enable ``direnv-mode``
-when emacs starts
-by putting this in ``~/.emacs/init.el``:
+when the active buffer changes,
+so that the environment always matches the current file.
+to automatically enable this behaviour when emacs starts,
+put this in your ``~/.emacs/init.el``:
 
 .. code-block:: elisp
 
   (direnv-mode)
 
-in addition to the global minor mode,
-this package provides the following commands,
-which can be invoked using ``M-x``
-or bound to a key:
-
-* ``direnv-mode``
-  enables or disables the global minor mode.
-
-* ``direnv-update-environment``
-  updates the emacs environment
-  to the direnv environment for the current file.
-
-* ``direnv-edit``
-  acts like ``direnv edit`` from a shell;
-  it edits the ``.envrc`` file
-  associated with the current directory
-  or one of its parent directories.
+additionally, the ``direnv-edit`` command
+acts like ``direnv edit`` from a shell:
+it edits the ``.envrc`` file
+associated with the current directory
+or one of its parent directories.
 
 installation
 ============
