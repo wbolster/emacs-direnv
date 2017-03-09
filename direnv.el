@@ -111,7 +111,7 @@ the environment changes."
                 " (%s)"
                 (if (and old-directory (string-equal old-directory new-directory))
                     new-directory
-                  (format "from %s to %s" (or old-directory "") new-directory)))))
+                  (format "from %s to %s" (or old-directory "(none)") new-directory)))))
     (when (string-empty-p summary)
       (setq summary "no changes"))
     (unless direnv-show-paths-in-summary
