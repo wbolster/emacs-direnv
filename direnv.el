@@ -74,7 +74,8 @@
 (defun direnv-update-environment (&optional filename)
   "Update the environment for FILENAME."
   (interactive)
-  (let ((filename (or filename buffer-file-name)))
+  (let ((filename (or filename buffer-file-name))
+        (old-directory direnv--active-directory))
     (unless filename
       (user-error "Buffer is not visiting a file"))
     (when (file-remote-p filename)
