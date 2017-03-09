@@ -95,7 +95,7 @@ to get shorter summary messages, use::
 
   (setq direnv-show-paths-in-summary nil)
 
-these setting can also be changed
+these settings can also be changed
 using the customize interface::
 
   M-x customize-group RET direnv RET
