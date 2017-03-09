@@ -99,3 +99,11 @@ these setting can also be changed
 using the customize interface::
 
   M-x customize-group RET direnv RET
+
+
+contributing
+============
+
+praise? complaints? bugs? questions? ideas?
+
+please use the github issue tracker.
