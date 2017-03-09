@@ -25,6 +25,27 @@ will be looked up in the correct ``$PATH``,
 and will be started
 with the correct environment variables set.
 
+installation
+============
+
+::
+
+  M-x package-install RET direnv RET
+
+alternatively, put the elisp file
+somewhere in the loading path
+and load it explicitly:
+
+.. code-block:: elisp
+
+  (require 'direnv)
+
+also make sure
+that the direnv version (``direnv version``)
+is at least 2.8.0
+since this package uses
+the json export capabilities (``direnv export json``).
+
 usage
 =====
 
@@ -78,24 +99,3 @@ these setting can also be changed
 using the customize interface::
 
   M-x customize-group RET direnv RET
-
-installation
-============
-
-::
-
-  M-x package-install RET direnv RET
-
-alternatively, put the elisp file
-somewhere in the loading path
-and load it explicitly:
-
-.. code-block:: elisp
-
-  (require 'direnv)
-
-also make sure
-that the direnv version (``direnv version``)
-is at least 2.8.0
-since this package uses
-the json export capabilities (``direnv export json``).
