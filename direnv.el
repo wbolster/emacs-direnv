@@ -19,6 +19,11 @@
 (require 'json)
 (require 'with-editor)
 
+(defgroup direnv nil
+  "direnv integration for emacs"
+  :group 'environment
+  :prefix "direnv-")
+
 (defvar direnv--output-buffer-name " *direnv*"
   "Name of the hidden buffer used for direnv interaction.")
 
