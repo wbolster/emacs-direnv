@@ -2,7 +2,7 @@
 
 ;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.0.1
-;; Package-Requires: ((emacs "24.4") (with-editor "2.5.10"))
+;; Package-Requires: ((emacs "24.4") (dash "2.13.0") (with-editor "2.5.10"))
 ;; Keywords: direnv, environment
 ;; URL: https://github.com/wbolster/emacs-direnv
 ;;
@@ -15,6 +15,7 @@
 
 ;;; Code:
 
+(require 'dash)
 (require 'json)
 (require 'with-editor)
 
