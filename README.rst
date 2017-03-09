@@ -32,6 +32,9 @@ the command ``direnv-update-environment``
 provides the core functionality of this package:
 it updates the emacs environment
 to the direnv environment for the current file.
+the minibuffer will show a message
+with a summary of the changes made to the environment,
+similar to what ``direnv`` does in a shell.
 
 the global minor mode ``direnv-mode`` does the same,
 but automatically updates the emacs environment

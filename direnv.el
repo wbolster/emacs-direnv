@@ -33,6 +33,19 @@
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
 
+(defcustom direnv-always-show-summary nil
+  "Whether to show a summary message of environment changes on every change.
+
+When nil, a summary is only shown when direnv-update-environment is called
+interactively."
+  :group 'direnv
+  :type 'boolean)
+
+(defcustom direnv-show-paths-in-summary t
+  "Whether to show directory paths in the summary message."
+  :group 'direnv
+  :type 'boolean)
+
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
   (with-current-buffer (get-buffer-create direnv--output-buffer-name)
@@ -76,6 +89,35 @@
        (when server-buffer-clients
          (with-editor-mode))))))
 
+(defun direnv--summarise-changes (items)
+  "Create a summary string for ITEMS."
+  (string-join
+   (--map
+    (concat
+     (if (cdr it) (if (getenv (car it)) "~" "+") "-")
+     (car it))
+    (--sort
+     (string-lessp (car it) (car other))
+     (--remove (string-prefix-p "DIRENV_" (car it)) items)))
+   " "))
+
+(defun direnv--show-summary (items old-directory new-directory)
+  "Show a summary message for ITEMS.
+
+OLD-DIRECTORY and NEW-DIRECTORY are the directories before and afther
+the environment changes."
+  (let ((summary (direnv--summarise-changes items))
+        (paths (format
+                " (%s)"
+                (if (and old-directory (string-equal old-directory new-directory))
+                    new-directory
+                  (format "from %s to %s" (or old-directory "") new-directory)))))
+    (when (string-empty-p summary)
+      (setq summary "no changes"))
+    (unless direnv-show-paths-in-summary
+      (setq paths ""))
+    (message "direnv: %s%s" summary paths)))
+
 ;;;###autoload
 (defun direnv-update-environment (&optional filename)
   "Update the environment for FILENAME."
@@ -87,12 +129,15 @@
     (when (file-remote-p filename)
       (user-error "Cannot use direnv for remote files"))
     (setq direnv--active-directory (file-name-directory filename))
-    (dolist (pair (direnv--export direnv--active-directory))
-      (let ((name (car pair))
-            (value (cdr pair)))
-        (setenv name value)
-        (when (string-equal name "PATH")
-          (setq exec-path (append (parse-colon-path value) (list exec-directory))))))))
+    (let ((items (direnv--export direnv--active-directory)))
+      (when (or direnv-always-show-summary (called-interactively-p 'interactive))
+        (direnv--show-summary items old-directory direnv--active-directory))
+      (dolist (pair items)
+        (let ((name (car pair))
+              (value (cdr pair)))
+          (setenv name value)
+          (when (string-equal name "PATH")
+            (setq exec-path (append (parse-colon-path value) (list exec-directory)))))))))
 
 ;;;###autoload
 (defun direnv-edit ()
