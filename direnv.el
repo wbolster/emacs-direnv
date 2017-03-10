@@ -89,7 +89,7 @@ usually results in coloured output."
 (defun direnv--maybe-update-environment ()
   "Maybe update the environment."
   (with-current-buffer (window-buffer)
-    (let* ((filename (buffer-file-name (window-buffer))))
+    (let* ((filename (buffer-file-name (current-buffer))))
       (when (and direnv--installed
                  filename
                  (not (string-equal direnv--active-directory (file-name-directory filename)))
