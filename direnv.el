@@ -46,6 +46,15 @@ interactively."
   :group 'direnv
   :type 'boolean)
 
+(defcustom direnv-use-faces-in-summary t
+  "Whether to use custom font faces in the summary message.
+
+When enabled, the summary message uses custom font faces strings
+for added, changed, and removed environment variables, which
+usually results in coloured output."
+  :group 'direnv
+  :type 'boolean)
+
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
   (with-current-buffer (get-buffer-create direnv--output-buffer-name)
@@ -93,12 +102,23 @@ interactively."
   "Create a summary string for ITEMS."
   (string-join
    (--map
-    (concat
-     (if (cdr it) (if (getenv (car it)) "~" "+") "-")
-     (car it))
+    (let* ((name (car it))
+           (state (cdr it))
+           (face)
+           (prefix))
+      (pcase state
+        ('added   (setq prefix "+" face 'diff-added))
+        ('changed (setq prefix "~" face 'diff-changed))
+        ('removed (setq prefix "-" face 'diff-removed)))
+      (propertize (concat prefix name) 'face face))
     (--sort
-     (string-lessp (car it) (car other))
-     (--remove (string-prefix-p "DIRENV_" (car it)) items)))
+     (string-lessp (symbol-name (cdr it)) (symbol-name (cdr other)))
+     (--map
+      (cons (car it)
+            (if (cdr it) (if (getenv (car it)) 'changed 'added) 'removed))
+      (--sort
+       (string-lessp (car it) (car other))
+       (--remove (string-prefix-p "DIRENV_" (car it)) items)))))
    " "))
 
 (defun direnv--show-summary (items old-directory new-directory)
@@ -116,6 +136,8 @@ the environment changes."
       (setq summary "no changes"))
     (unless direnv-show-paths-in-summary
       (setq paths ""))
+    (unless direnv-use-faces-in-summary
+      (setq summary (substring-no-properties summary)))
     (message "direnv: %s%s" summary paths)))
 
 ;;;###autoload

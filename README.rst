@@ -99,6 +99,17 @@ to get shorter summary messages, use:
 
   (setq direnv-show-paths-in-summary nil)
 
+the summary message uses different font faces
+for added, changed, and removed environment variables.
+depending on your theme,
+this usually results in different colours.
+this behaviour can be disabled
+by changing the ``direnv-use-faces-in-summary`` variable:
+
+.. code-block:: elisp
+
+  (setq direnv-use-faces-in-summary nil)
+
 these settings can also be changed
 using the customize interface::
 
