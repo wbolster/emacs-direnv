@@ -10,7 +10,13 @@ emacs-direnv
 
 .. _direnv: https://direnv.net/
 
+overview
+========
+
 this package provides direnv_ integration for emacs.
+
+.. image:: https://cloud.githubusercontent.com/assets/748944/23811101/c82c40d0-05d4-11e7-8a79-74e1d80fa5cf.png
+   :alt: mandatory screenshot
 
 it works by invoking
 ``direnv`` to obtain the environment
