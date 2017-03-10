@@ -24,10 +24,14 @@
   :group 'environment
   :prefix "direnv-")
 
+(defun direnv--detect ()
+  "Detect the direnv executable."
+  (executable-find "direnv"))
+
 (defvar direnv--output-buffer-name " *direnv*"
   "Name of the hidden buffer used for direnv interaction.")
 
-(defvar direnv--installed (executable-find "direnv")
+(defvar direnv--installed (direnv--detect)
   "Whether direnv is installed.")
 
 (defvar direnv--active-directory nil
@@ -71,6 +75,10 @@ usually results in coloured output."
 
 (defun direnv--enable ()
   "Enable direnv mode."
+  (unless direnv--installed
+    (setq direnv--installed (direnv--detect)))
+  (unless direnv--installed
+    (user-error "Could not find the direnv executable. Is exec-path correct?"))
   (add-hook 'post-command-hook #'direnv--maybe-update-environment)
   (direnv--maybe-update-environment))
 
