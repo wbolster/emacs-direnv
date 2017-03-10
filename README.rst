@@ -88,7 +88,7 @@ change the ``direnv-always-show-summary`` variable:
 
   (setq direnv-always-show-summary t)
 
-by default, the summary message also contains
+the summary message contains
 the paths of the old and new directories,
 which may be a bit too verbose for your taste.
 the ``direnv-show-paths-in-summary`` variable
