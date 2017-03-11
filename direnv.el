@@ -64,12 +64,13 @@ usually results in coloured output."
   (with-current-buffer (get-buffer-create direnv--output-buffer-name)
     (delete-region (point-min) (point-max))
     (let* ((default-directory directory)
-           (exit-code (call-process "direnv" nil '(t nil) nil "export" "json")))
+           (exit-code (call-process "direnv" nil '(t t) nil "export" "json")))
       (unless (zerop exit-code)
         (error "Error running direnv: exit code %s; output was:\n%S"
                exit-code (buffer-string)))
       (unless (zerop (buffer-size))
-        (goto-char (point-min))
+        (goto-char (point-max))
+        (re-search-backward "^{")
         (let ((json-key-type 'string))
           (json-read-object))))))
 
