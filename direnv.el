@@ -66,8 +66,9 @@ usually results in coloured output."
     (let* ((default-directory directory)
            (exit-code (call-process "direnv" nil '(t t) nil "export" "json")))
       (unless (zerop exit-code)
-        (error "Error running direnv: exit code %s; output was:\n%S"
-               exit-code (buffer-string)))
+        (display-buffer (current-buffer))
+        (error "Error running direnv: exit code %s; output is in buffer '%s'"
+               exit-code direnv--output-buffer-name))
       (unless (zerop (buffer-size))
         (goto-char (point-max))
         (re-search-backward "^{")
