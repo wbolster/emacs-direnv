@@ -122,6 +122,32 @@ using the customize interface::
   M-x customize-group RET direnv RET
 
 
+troubleshooting
+===============
+
+if you experience problems,
+first check the hidden buffer named ``*direnv*``
+(with a leading space before the name).
+this buffer contains
+the output of the last ``direnv`` invocation,
+which will likely contain more information
+about the source of the problem.
+
+this buffer will be automatically shown
+when ``direnv`` exits with a non-zero status code,
+but for non-fatal problems
+such as incorrect ``.envrc`` files
+you may have to open this buffer manually for inspection.
+
+if you use ``direnv-mode`` and an error occurs,
+emacs will automatically disable the hook
+that ``direnv-mode`` installed.
+after fixing the problem,
+call ``direnv-update-environment`` manually
+to ensure the problem is solved,
+then re-enable ``direnv-mode``.
+
+
 contributing
 ============
 
