@@ -62,7 +62,7 @@ usually results in coloured output."
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
   (with-current-buffer (get-buffer-create direnv--output-buffer-name)
-    (delete-region (point-min) (point-max))
+    (erase-buffer)
     (let* ((default-directory directory)
            (exit-code (call-process "direnv" nil '(t t) nil "export" "json")))
       (unless (zerop exit-code)
