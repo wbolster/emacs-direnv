@@ -61,6 +61,10 @@ usually results in coloured output."
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
+  (unless direnv--installed
+    (setq direnv--installed (direnv--detect)))
+  (unless direnv--installed
+    (user-error "Could not find the direnv executable. Is exec-path correct?"))
   (with-current-buffer (get-buffer-create direnv--output-buffer-name)
     (erase-buffer)
     (let* ((default-directory directory)
@@ -77,10 +81,6 @@ usually results in coloured output."
 
 (defun direnv--enable ()
   "Enable direnv mode."
-  (unless direnv--installed
-    (setq direnv--installed (direnv--detect)))
-  (unless direnv--installed
-    (user-error "Could not find the direnv executable. Is exec-path correct?"))
   (add-hook 'post-command-hook #'direnv--maybe-update-environment)
   (direnv--maybe-update-environment))
 
