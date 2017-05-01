@@ -175,6 +175,11 @@ and
 history
 =======
 
+* 1.2.0 (2017-05-01)
+
+  * summary message now uses custom font faces (colours!)
+  * improved error handling
+
 * 1.1.0 (2017-03-09)
 
   * implemented summary message after updating environment,
