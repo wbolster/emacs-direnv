@@ -17,6 +17,7 @@
 
 (require 'dash)
 (require 'json)
+(require 'subr-x)
 (require 'with-editor)
 
 (defgroup direnv nil
