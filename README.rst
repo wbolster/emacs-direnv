@@ -172,6 +172,20 @@ and
 <https://github.com/christianromney>`_.
 
 
+history
+=======
+
+* 1.1.0 (2017-03-09)
+
+  * implemented summary message after updating environment,
+    and configuration variables to tweak how it works.
+  * expanded docs
+
+* 1.0.1 (2017-03-08)
+
+  * initial release with basic functionality
+
+
 license
 =======
 
