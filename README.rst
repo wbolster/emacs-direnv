@@ -175,6 +175,11 @@ and
 history
 =======
 
+* 1.2.1 (2017-06-22)
+
+  * ``direnv-mode`` no longer fails when opening a file in
+    a directory that does not (yet) exist.
+
 * 1.2.0 (2017-05-01)
 
   * summary message now uses custom font faces (colours!)
