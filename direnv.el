@@ -92,11 +92,13 @@ usually results in coloured output."
 (defun direnv--maybe-update-environment ()
   "Maybe update the environment."
   (with-current-buffer (window-buffer)
-    (let* ((filename (buffer-file-name (current-buffer))))
-      (when (and filename
-                 (not (string-equal direnv--active-directory (file-name-directory filename)))
-                 (not (file-remote-p filename)))
-        (direnv-update-environment filename)))))
+    (let* ((file-name (buffer-file-name (current-buffer)))
+           (directory-name (when file-name (file-name-directory file-name))))
+      (when (and file-name
+                 (file-directory-p directory-name)
+                 (not (string-equal direnv--active-directory directory-name))
+                 (not (file-remote-p file-name)))
+        (direnv-update-environment file-name)))))
 
 (defun direnv--maybe-enable-with-editor-mode ()
   "Enable with-editor-mode when run via direnv-edit."
