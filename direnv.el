@@ -151,16 +151,16 @@ the environment changes."
     (message "direnv: %s%s" summary paths)))
 
 ;;;###autoload
-(defun direnv-update-environment (&optional filename)
-  "Update the environment for FILENAME."
+(defun direnv-update-environment (&optional file-name)
+  "Update the environment for FILE-NAME."
   (interactive)
-  (let ((filename (or filename buffer-file-name))
+  (let ((file-name (or file-name buffer-file-name))
         (old-directory direnv--active-directory))
-    (unless filename
+    (unless file-name
       (user-error "Buffer is not visiting a file"))
-    (when (file-remote-p filename)
+    (when (file-remote-p file-name)
       (user-error "Cannot use direnv for remote files"))
-    (setq direnv--active-directory (file-name-directory filename))
+    (setq direnv--active-directory (file-name-directory file-name))
     (let ((items (direnv--export direnv--active-directory)))
       (when (or direnv-always-show-summary (called-interactively-p 'interactive))
         (direnv--show-summary items old-directory direnv--active-directory))
