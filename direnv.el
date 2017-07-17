@@ -8,6 +8,10 @@
 ;;
 ;; This file is not part of GNU Emacs.
 
+;;; License:
+
+;; 3-clause "new bsd"; see readme for details.
+
 ;;; Commentary:
 
 ;; This package provides direnv integration for Emacs.
