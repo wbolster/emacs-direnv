@@ -64,6 +64,20 @@ usually results in coloured output."
   :group 'direnv
   :type 'boolean)
 
+(defcustom direnv-non-file-modes nil
+  "List of modes where direnv will update even if the buffer has no file.
+
+In these modes, direnv will use `default-directory' instead of
+`(file-name-directory (buffer-file-name (current-buffer)))'."
+  :group 'direnv
+  :type '(repeat function))
+
+(defun direnv--directory ()
+  "Return the relevant directory for the current buffer, or nil."
+  (let ((f (buffer-file-name (current-buffer))))
+    (cond (f (file-name-directory f))
+          ((member major-mode direnv-non-file-modes) default-directory))))
+
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
   (unless direnv--installed
@@ -96,13 +110,12 @@ usually results in coloured output."
 (defun direnv--maybe-update-environment ()
   "Maybe update the environment."
   (with-current-buffer (window-buffer)
-    (let* ((file-name (buffer-file-name (current-buffer)))
-           (directory-name (when file-name (file-name-directory file-name))))
-      (when (and file-name
+    (let ((directory-name (direnv--directory)))
+      (when (and directory-name
                  (file-directory-p directory-name)
                  (not (string-equal direnv--active-directory directory-name))
-                 (not (file-remote-p file-name)))
-        (direnv-update-environment file-name)))))
+                 (not (file-remote-p directory-name)))
+        (direnv-update-directory-environment directory-name)))))
 
 (defun direnv--maybe-enable-with-editor-mode ()
   "Enable with-editor-mode when run via direnv-edit."
@@ -160,15 +173,22 @@ the environment changes."
 (defun direnv-update-environment (&optional file-name)
   "Update the environment for FILE-NAME."
   (interactive)
-  (let ((file-name (or file-name buffer-file-name))
+  (direnv-update-directory-environment
+   (if file-name (file-name-directory file-name) (direnv--directory))
+   (called-interactively-p 'interactive)))
+
+;;;###autoload
+(defun direnv-update-directory-environment (&optional directory force-summary)
+  "Update the environment for DIRECTORY."
+  (interactive)
+  (let ((directory (or directory default-directory))
         (old-directory direnv--active-directory))
-    (unless file-name
-      (user-error "Buffer is not visiting a file"))
-    (when (file-remote-p file-name)
+    (when (file-remote-p directory)
       (user-error "Cannot use direnv for remote files"))
-    (setq direnv--active-directory (file-name-directory file-name))
+    (setq direnv--active-directory directory)
     (let ((items (direnv--export direnv--active-directory)))
-      (when (or direnv-always-show-summary (called-interactively-p 'interactive))
+      (when (or direnv-always-show-summary force-summary
+                (called-interactively-p 'interactive))
         (direnv--show-summary items old-directory direnv--active-directory))
       (dolist (pair items)
         (let ((name (car pair))
