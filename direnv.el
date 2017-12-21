@@ -172,9 +172,10 @@ the environment changes."
 (defun direnv-update-environment (&optional file-name)
   "Update the environment for FILE-NAME."
   (interactive)
-  (direnv-update-directory-environment
-   (if file-name (file-name-directory file-name) (direnv--directory))
-   (called-interactively-p 'interactive)))
+  (let ((force-summary (called-interactively-p 'interactive)))
+    (direnv-update-directory-environment
+     (if file-name (file-name-directory file-name) (direnv--directory))
+     force-summary)))
 
 ;;;###autoload
 (defun direnv-update-directory-environment (&optional directory force-summary)
