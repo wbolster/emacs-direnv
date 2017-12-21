@@ -214,6 +214,7 @@ the environment changes."
 When this mode is active, the environment inside Emacs will be
 continuously updated to match the direnv environment for the currently
 visited (local) file."
+  :require 'direnv
   :global t
   (if direnv-mode
       (direnv--enable)
