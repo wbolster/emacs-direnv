@@ -22,7 +22,6 @@
 (require 'dash)
 (require 'json)
 (require 'subr-x)
-(require 'with-editor)
 
 (defgroup direnv nil
   "direnv integration for emacs"
@@ -201,6 +200,7 @@ the environment changes."
 (defun direnv-edit ()
   "Edit the .envrc associated with the current directory."
   (interactive)
+  (require 'with-editor)
   (let ((display-buffer-alist
          (cons (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil))
                display-buffer-alist)))
