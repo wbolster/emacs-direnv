@@ -178,7 +178,9 @@ the environment changes."
 
 ;;;###autoload
 (defun direnv-update-directory-environment (&optional directory force-summary)
-  "Update the environment for DIRECTORY."
+  "Update the environment for DIRECTORY.
+
+When FORCE-SUMMARY is non-nil, a summary message is always shown."
   (interactive)
   (let ((directory (or directory default-directory))
         (old-directory direnv--active-directory))
