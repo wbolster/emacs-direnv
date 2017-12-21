@@ -3,7 +3,7 @@
 ;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.2.1
 ;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (with-editor "2.5.10"))
-;; Keywords: direnv, environment
+;; Keywords: direnv, environment, processes, unix, tools
 ;; URL: https://github.com/wbolster/emacs-direnv
 ;;
 ;; This file is not part of GNU Emacs.
