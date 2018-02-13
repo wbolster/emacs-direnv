@@ -34,6 +34,14 @@ with the correct environment variables set.
 installation
 ============
 
+with ``use-package``:
+
+.. code-block:: elisp
+
+  (use-package direnv)
+
+manually:
+
 ::
 
   M-x package-install RET direnv RET
@@ -73,6 +81,14 @@ put this in your ``~/.emacs/init.el``:
 .. code-block:: elisp
 
   (direnv-mode)
+
+or use the ``use-package`` ``:config`` block:
+
+.. code-block:: elisp
+
+  (use-package direnv
+   :config
+   (direnv-mode))
 
 additionally, the ``direnv-edit`` command
 acts like ``direnv edit`` from a shell:
