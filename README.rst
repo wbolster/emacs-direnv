@@ -99,43 +99,40 @@ or one of its parent directories.
 configuration
 =============
 
-to avoid visual distraction,
-no summary messages are displayed in the minibuffer
-when ``direnv-mode`` automatically changes the environment,
-since the environment may change on every buffer switch.
-if you prefer to see the summary message anyway,
-change the ``direnv-always-show-summary`` variable:
-
-.. code-block:: elisp
-
-  (setq direnv-always-show-summary t)
-
-the summary message contains
-the paths of the old and new directories,
-which may be a bit too verbose for your taste.
-the ``direnv-show-paths-in-summary`` variable
-controls whether the summary includes path names.
-to get shorter summary messages, use:
-
-.. code-block:: elisp
-
-  (setq direnv-show-paths-in-summary nil)
-
-the summary message uses different font faces
-for added, changed, and removed environment variables.
-depending on your theme,
-this usually results in different colours.
-this behaviour can be disabled
-by changing the ``direnv-use-faces-in-summary`` variable:
-
-.. code-block:: elisp
-
-  (setq direnv-use-faces-in-summary nil)
-
-these settings can also be changed
-using the customize interface::
+this packages offers various configuration settings.
+these settings can be set in a ``use-package`` ``:custom`` block,
+using ``(setq)``, or via the customize interface::
 
   M-x customize-group RET direnv RET
+
+the available settings are outlined below.
+
+* ``direnv-always-show-summary``
+
+  to avoid visual distraction,
+  no summary messages are displayed in the minibuffer
+  when ``direnv-mode`` automatically changes the environment,
+  since the environment may change on every buffer switch.
+  if you prefer to see the summary message anyway,
+  change the ``direnv-always-show-summary`` to ``t``.
+
+* ``direnv-show-paths-in-summary``
+
+  the summary message contains
+  the paths of the old and new directories,
+  which may be a bit too verbose for your taste.
+  the ``direnv-show-paths-in-summary`` variable
+  controls whether the summary includes path names.
+  to get shorter summary messages, use ``nil``.
+
+* ``direnv-use-faces-in-summary``
+
+  the summary message uses different font faces
+  for added, changed, and removed environment variables.
+  depending on your theme,
+  this usually results in different colours.
+  this behaviour can be disabled
+  by setting ``direnv-use-faces-in-summary`` to ``nil``.
 
 
 troubleshooting
