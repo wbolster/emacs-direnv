@@ -134,6 +134,21 @@ the available settings are outlined below.
   this behaviour can be disabled
   by setting ``direnv-use-faces-in-summary`` to ``nil``.
 
+* ``direnv-non-file-modes``
+
+  this is a list of modes
+  where direnv will update
+  even if the buffer has no file.
+  examples include shells and
+  interactive compilation (``comint``) buffers.
+  example usage (with ``use-package``):
+
+  .. code-block:: elisp
+
+    (use-package foobar
+     :config
+     (add-to-list 'direnv-non-file-modes 'foobar-mode))
+
 
 troubleshooting
 ===============
