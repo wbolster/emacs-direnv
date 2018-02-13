@@ -203,6 +203,12 @@ and
 history
 =======
 
+* 1.3.0 (2018-02-13)
+
+  * improved operation with non-file modes,
+    such as shells and compilation buffers.
+    see ``direnv-non-file-modes``.
+
 * 1.2.1 (2017-06-22)
 
   * ``direnv-mode`` no longer fails when opening a file in
