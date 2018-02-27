@@ -109,12 +109,12 @@ the available settings are outlined below.
 
 * ``direnv-always-show-summary``
 
-  to avoid visual distraction,
-  no summary messages are displayed in the minibuffer
   when ``direnv-mode`` automatically changes the environment,
-  since the environment may change on every buffer switch.
-  if you prefer to see the summary message anyway,
-  change the ``direnv-always-show-summary`` to ``t``.
+  a summary message will be shown in the minibuffer.
+  summary messages of automatic changes can be suppressed
+  by setting ``direnv-always-show-summary`` to ``nil``.
+  interactive calls, e.g. ``direnv-update-environment``,
+  will still show a summary message.
 
 * ``direnv-show-paths-in-summary``
 
