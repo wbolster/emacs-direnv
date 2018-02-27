@@ -203,6 +203,12 @@ and
 history
 =======
 
+* 1.4.0 (not yet tagged)
+
+  * smarter default behaviour of summary messages on environment
+    change; see
+    `#23 <https://github.com/wbolster/emacs-direnv/issues/23>`_
+
 * 1.3.0 (2018-02-13)
 
   * improved operation with non-file modes,
