@@ -41,7 +41,7 @@
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
 
-(defcustom direnv-always-show-summary nil
+(defcustom direnv-always-show-summary t
   "Whether to show a summary message of environment changes on every change.
 
 When nil, a summary is only shown when direnv-update-environment is called
@@ -149,13 +149,12 @@ In these modes, direnv will use `default-directory' instead of
        (--remove (string-prefix-p "DIRENV_" (car it)) items)))))
    " "))
 
-(defun direnv--show-summary (items old-directory new-directory)
-  "Show a summary message for ITEMS.
+(defun direnv--show-summary (summary old-directory new-directory)
+  "Show a SUMMARY message.
 
 OLD-DIRECTORY and NEW-DIRECTORY are the directories before and afther
 the environment changes."
-  (let ((summary (direnv--summarise-changes items))
-        (paths (format
+  (let ((paths (format
                 " (%s)"
                 (if (and old-directory (string-equal old-directory new-directory))
                     new-directory
@@ -169,35 +168,43 @@ the environment changes."
     (message "direnv: %s%s" summary paths)))
 
 ;;;###autoload
-(defun direnv-update-environment (&optional file-name)
-  "Update the environment for FILE-NAME."
+(defun direnv-update-environment (&optional file-name force-summary)
+  "Update the environment for FILE-NAME.
+
+See `direnv-update-directory-environment' for FORCE-SUMMARY."
   (interactive)
-  (let ((force-summary (called-interactively-p 'interactive)))
-    (direnv-update-directory-environment
-     (if file-name (file-name-directory file-name) (direnv--directory))
-     force-summary)))
+  (when (called-interactively-p 'interactive)
+    (setq force-summary t))
+  (direnv-update-directory-environment
+   (if file-name (file-name-directory file-name) (direnv--directory))
+   force-summary))
 
 ;;;###autoload
 (defun direnv-update-directory-environment (&optional directory force-summary)
   "Update the environment for DIRECTORY.
 
-When FORCE-SUMMARY is non-nil, a summary message is always shown."
+When FORCE-SUMMARY is non-nil or when called interactively, show a summary message."
   (interactive)
   (let ((directory (or directory default-directory))
-        (old-directory direnv--active-directory))
+        (old-directory direnv--active-directory)
+        (items)
+        (summary)
+        (show-summary (or force-summary (called-interactively-p 'interactive))))
     (when (file-remote-p directory)
       (user-error "Cannot use direnv for remote files"))
-    (setq direnv--active-directory directory)
-    (let ((items (direnv--export direnv--active-directory)))
-      (when (or direnv-always-show-summary force-summary
-                (called-interactively-p 'interactive))
-        (direnv--show-summary items old-directory direnv--active-directory))
-      (dolist (pair items)
-        (let ((name (car pair))
-              (value (cdr pair)))
-          (setenv name value)
-          (when (string-equal name "PATH")
-            (setq exec-path (append (parse-colon-path value) (list exec-directory)))))))))
+    (setq direnv--active-directory directory
+          items (direnv--export direnv--active-directory)
+          summary (direnv--summarise-changes items))
+    (when (and direnv-always-show-summary (not (string-empty-p summary)))
+      (setq show-summary t))
+    (when show-summary
+      (direnv--show-summary summary old-directory direnv--active-directory))
+    (dolist (pair items)
+      (let ((name (car pair))
+            (value (cdr pair)))
+        (setenv name value)
+        (when (string-equal name "PATH")
+          (setq exec-path (append (parse-colon-path value) (list exec-directory))))))))
 
 ;;;###autoload
 (defun direnv-edit ()
