@@ -203,7 +203,7 @@ and
 history
 =======
 
-* 1.4.0 (not yet tagged)
+* 1.4.0 (2018-03-01)
 
   * smarter default behaviour of summary messages on environment
     change; see
