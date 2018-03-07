@@ -23,6 +23,11 @@
 (require 'json)
 (require 'subr-x)
 
+(eval-when-compile
+  (require 'server)
+  (declare-function with-editor-mode "with-editor.el")
+  (declare-function with-editor-async-shell-command "with-editor.el"))
+
 (defgroup direnv nil
   "direnv integration for emacs"
   :group 'environment
