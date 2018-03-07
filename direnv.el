@@ -1,4 +1,4 @@
-;;; direnv.el --- direnv support for emacs -*- lexical-binding: t; -*-
+;;; direnv.el --- direnv support -*- lexical-binding: t; -*-
 
 ;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.4.0
