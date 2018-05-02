@@ -203,6 +203,11 @@ and
 history
 =======
 
+* 1.5.0 (…)
+
+  * handle indirect buffers correctly; see
+    `#25 <https://github.com/wbolster/emacs-direnv/issues/25>`_
+
 * 1.4.0 (2018-03-01)
 
   * smarter default behaviour of summary messages on environment

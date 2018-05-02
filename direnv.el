@@ -78,8 +78,9 @@ In these modes, direnv will use `default-directory' instead of
 
 (defun direnv--directory ()
   "Return the relevant directory for the current buffer, or nil."
-  (let ((f (buffer-file-name (current-buffer))))
-    (cond (f (file-name-directory f))
+  (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
+         (file-name (buffer-file-name buffer)))
+    (cond (file-name (file-name-directory file-name))
           ((member major-mode direnv-non-file-modes) default-directory))))
 
 (defun direnv--export (directory)
