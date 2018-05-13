@@ -143,9 +143,9 @@ In these modes, direnv will use `default-directory' instead of
            (face)
            (prefix))
       (pcase state
-        ('added   (setq prefix "+" face 'diff-added))
-        ('changed (setq prefix "~" face 'diff-changed))
-        ('removed (setq prefix "-" face 'diff-removed)))
+        (`added   (setq prefix "+" face 'diff-added))
+        (`changed (setq prefix "~" face 'diff-changed))
+        (`removed (setq prefix "-" face 'diff-removed)))
       (propertize (concat prefix name) 'face face))
     (--sort
      (string-lessp (symbol-name (cdr it)) (symbol-name (cdr other)))
