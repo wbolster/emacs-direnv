@@ -89,21 +89,30 @@ In these modes, direnv will use `default-directory' instead of
     (setq direnv--installed (direnv--detect)))
   (unless direnv--installed
     (user-error "Could not find the direnv executable. Is exec-path correct?"))
-  (let ((environment process-environment))
+  (let ((environment process-environment)
+        ;; call-process can only output stderr to file
+        (stderr-tempfile (make-temp-file "direnv-stderr")))
+
     (with-current-buffer (get-buffer-create direnv--output-buffer-name)
       (erase-buffer)
       (let* ((default-directory directory)
              (process-environment environment)
-             (exit-code (call-process "direnv" nil '(t t) nil "export" "json")))
+             (exit-code (call-process "direnv" nil `(t ,stderr-tempfile) nil "export" "json")))
         (unless (zerop exit-code)
-          (display-buffer (current-buffer))
-          (error "Error running direnv: exit code %s; output is in buffer '%s'"
-                 exit-code direnv--output-buffer-name))
+          ; write the stderr messages to the end of our output buffer
+          (insert-file-contents stderr-tempfile)
+          ; then fill a temp buffer with the message and display in status bar
+          (with-temp-buffer
+            (insert-file-contents stderr-tempfile)
+              (message "direnv exited %s:\n%s\nOpen hidden buffer \"%s\" for full output"
+                       exit-code (buffer-string) direnv--output-buffer-name)))
         (unless (zerop (buffer-size))
           (goto-char (point-max))
           (re-search-backward "^{")
           (let ((json-key-type 'string))
-            (json-read-object)))))))
+            (json-read-object)))))
+
+    (delete-file stderr-tempfile)))
 
 (defun direnv--enable ()
   "Enable direnv mode."
