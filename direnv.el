@@ -68,13 +68,13 @@ usually results in coloured output."
   :group 'direnv
   :type 'boolean)
 
-(defcustom direnv-non-file-modes nil
+(defcustom direnv-non-file-modes '(eshell-mode dired-mode)
   "List of modes where direnv will update even if the buffer has no file.
 
 In these modes, direnv will use `default-directory' instead of
 `(file-name-directory (buffer-file-name (current-buffer)))'."
   :group 'direnv
-  :type '(repeat function))
+  :type '(repeat (symbol :tag "Major mode")))
 
 (defun direnv--directory ()
   "Return the relevant directory for the current buffer, or nil."
