@@ -37,8 +37,8 @@
   "Detect the direnv executable."
   (executable-find "direnv"))
 
-(defvar direnv--output-buffer-name " *direnv*"
-  "Name of the hidden buffer used for direnv interaction.")
+(defvar direnv--output-buffer-name "*direnv*"
+  "Name of the buffer filled with the last direnv output.")
 
 (defvar direnv--installed (direnv--detect)
   "Whether direnv is installed.")

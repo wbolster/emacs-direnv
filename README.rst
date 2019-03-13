@@ -154,8 +154,7 @@ troubleshooting
 ===============
 
 if you experience problems,
-first check the hidden buffer named ``*direnv*``
-(with a leading space before the name).
+first check the buffer named ``*direnv*``.
 this buffer contains
 the output of the last ``direnv`` invocation,
 which will likely contain more information
