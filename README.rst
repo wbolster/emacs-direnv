@@ -199,6 +199,11 @@ history
 
   * handle indirect buffers correctly; see
     `#25 <https://github.com/wbolster/emacs-direnv/issues/25>`_
+  * display ``direnv`` errors in the message area; see
+    `#34 <https://github.com/wbolster/emacs-direnv/pull/34>`_
+  * make the ``*direnv*`` buffer easier to find by removing the
+    leading space
+  * add ``eshell`` and ``direv`` to list of non-file-modes
 
 * 1.4.0 (2018-03-01)
 
