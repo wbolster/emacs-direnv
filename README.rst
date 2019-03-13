@@ -154,26 +154,18 @@ troubleshooting
 ===============
 
 if you experience problems,
-first check the hidden buffer named ``*direnv*``
-(with a leading space before the name).
+first check the buffer named ``*direnv*``.
 this buffer contains
 the output of the last ``direnv`` invocation,
 which will likely contain more information
 about the source of the problem.
 
-this buffer will be automatically shown
-when ``direnv`` exits with a non-zero status code,
+when an error happens, the direnv stderr will
+be automatically shown in the message area,
 but for non-fatal problems
 such as incorrect ``.envrc`` files
-you may have to open this buffer manually for inspection.
-
-if you use ``direnv-mode`` and an error occurs,
-emacs will automatically disable the hook
-that ``direnv-mode`` installed.
-after fixing the problem,
-call ``direnv-update-environment`` manually
-to ensure the problem is solved,
-then re-enable ``direnv-mode``.
+you may have to open this buffer manually for inspection
+of the full output of the last ``direnv`` call.
 
 
 contributing
@@ -207,6 +199,13 @@ history
 
   * handle indirect buffers correctly; see
     `#25 <https://github.com/wbolster/emacs-direnv/issues/25>`_
+  * display ``direnv`` errors in the message area; see
+    `#34 <https://github.com/wbolster/emacs-direnv/pull/34>`_
+  * make the ``*direnv*`` buffer easier to find by removing the
+    leading space
+  * add ``eshell`` and ``dired`` to list of non-file-modes; see
+    `#36 <https://github.com/wbolster/emacs-direnv/pull/36>`_ and
+    `#33 <https://github.com/wbolster/emacs-direnv/issues/33>`_
 
 * 1.4.0 (2018-03-01)
 
