@@ -195,7 +195,7 @@ and
 history
 =======
 
-* 1.5.0 (…)
+* 1.5.0 (2019-03-19)
 
   * handle indirect buffers correctly; see
     `#25 <https://github.com/wbolster/emacs-direnv/issues/25>`_
