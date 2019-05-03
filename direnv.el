@@ -92,27 +92,26 @@ In these modes, direnv will use `default-directory' instead of
   (let ((environment process-environment)
         ;; call-process can only output stderr to file
         (stderr-tempfile (make-temp-file "direnv-stderr")))
-
     (unwind-protect
         (with-current-buffer (get-buffer-create direnv--output-buffer-name)
           (erase-buffer)
           (let* ((default-directory directory)
                  (process-environment environment)
                  (exit-code (call-process "direnv" nil `(t ,stderr-tempfile) nil "export" "json")))
-            (unless (zerop exit-code)
-                                        ; write the stderr messages to the end of our output buffer
-              (insert-file-contents stderr-tempfile)
-                                        ; then fill a temp buffer with the message and display in status bar
+            (prog1 (unless (zerop (buffer-size))
+                     (goto-char (point-max))
+                     (re-search-backward "^{")
+                     (let ((json-key-type 'string))
+                       (json-read-object)))
+              (unless (zerop (file-attribute-size (file-attributes stderr-tempfile)))
+                (unless (zerop (buffer-size)) (insert "\n"))
+                ;; write the stderr messages to the end of our output buffer
+                (insert-file-contents stderr-tempfile))
               (with-temp-buffer
                 (insert-file-contents stderr-tempfile)
-                (message "direnv exited %s:\n%s\nOpen hidden buffer \"%s\" for full output"
-                         exit-code (buffer-string) direnv--output-buffer-name)))
-            (unless (zerop (buffer-size))
-              (goto-char (point-max))
-              (re-search-backward "^{")
-              (let ((json-key-type 'string))
-                (json-read-object)))))
-
+                (unless (zerop exit-code)
+                  (message "direnv exited %s:\n%s\nOpen buffer \"%s\" for full output"
+                           exit-code (buffer-string) direnv--output-buffer-name))))))
       (delete-file stderr-tempfile))))
 
 (defun direnv--enable ()
