@@ -152,23 +152,35 @@ In these modes, direnv will use `default-directory' instead of
        (--remove (string-prefix-p "DIRENV_" (car it)) items)))))
    " "))
 
+(defun direnv--format-paths (old-directory new-directory)
+  "Format the path component of the summary message.
+
+The string will describe a transition from OLD-DIRECTORY and
+NEW-DIRECTORY, but OLD-DIRECTORY can be nil."
+  (cond
+   ((or (null old-directory)
+        (string-equal old-directory new-directory))
+    (abbreviate-file-name (directory-file-name new-directory)))
+   (t
+    (format "%s → %s"
+            (abbreviate-file-name (directory-file-name old-directory))
+            (abbreviate-file-name (directory-file-name new-directory))))))
+
 (defun direnv--show-summary (summary old-directory new-directory)
   "Show a SUMMARY message.
 
 OLD-DIRECTORY and NEW-DIRECTORY are the directories before and afther
 the environment changes."
-  (let ((paths (format
-                " (%s)"
-                (if (and old-directory (string-equal old-directory new-directory))
-                    new-directory
-                  (format "from %s to %s" (or old-directory "(none)") new-directory)))))
-    (when (string-empty-p summary)
-      (setq summary "no changes"))
-    (unless direnv-show-paths-in-summary
-      (setq paths ""))
+  (let ((summary
+         (if (string-empty-p summary) "no changes" summary))
+        (paths
+         (when direnv-show-paths-in-summary
+           (direnv--format-paths old-directory new-directory))))
     (unless direnv-use-faces-in-summary
       (setq summary (substring-no-properties summary)))
-    (message "direnv: %s%s" summary paths)))
+    (if paths
+        (message "direnv: %s (%s)" summary paths)
+      (message "direnv: %s" summary))))
 
 ;;;###autoload
 (defun direnv-update-environment (&optional file-name force-summary)
