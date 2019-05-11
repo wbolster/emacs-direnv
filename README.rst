@@ -205,7 +205,7 @@ and
 history
 =======
 
-* 2.0.0 (not released)
+* 2.0.0 (2019-05-11)
 
   * add `direnv-allow` command; see
     `#43 <https://github.com/wbolster/emacs-direnv/pull/43>`_
