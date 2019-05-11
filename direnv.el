@@ -1,6 +1,6 @@
 ;;; direnv.el --- direnv support -*- lexical-binding: t; -*-
 
-;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
+;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.5.0
 ;; Package-Requires: ((emacs "24.4") (dash "2.12.0"))
 ;; Keywords: direnv, environment, processes, unix, tools
