@@ -90,22 +90,23 @@ In these modes, direnv will use `default-directory' instead of
   (unless direnv--installed
     (user-error "Could not find the direnv executable. Is exec-path correct?"))
   (let ((environment process-environment)
-        ;; call-process can only output stderr to file
-        (stderr-tempfile (make-temp-file "direnv-stderr")))
+        (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
     (unwind-protect
         (with-current-buffer (get-buffer-create direnv--output-buffer-name)
           (erase-buffer)
           (let* ((default-directory directory)
                  (process-environment environment)
-                 (exit-code (call-process "direnv" nil `(t ,stderr-tempfile) nil "export" "json")))
-            (prog1 (unless (zerop (buffer-size))
-                     (goto-char (point-max))
-                     (re-search-backward "^{")
-                     (let ((json-key-type 'string))
-                       (json-read-object)))
+                 (exit-code (call-process "direnv" nil `(t ,stderr-tempfile) nil "export" "json"))
+                 (json-key-type 'string))
+            (prog1
+                (unless (zerop (buffer-size))
+                  (goto-char (point-max))
+                  (re-search-backward "^{")
+                  (json-read-object))
               (unless (zerop (file-attribute-size (file-attributes stderr-tempfile)))
-                (unless (zerop (buffer-size)) (insert "\n"))
-                ;; write the stderr messages to the end of our output buffer
+                (goto-char (point-max))
+                (unless (zerop (buffer-size))
+                  (insert "\n\n"))
                 (insert-file-contents stderr-tempfile))
               (with-temp-buffer
                 (unless (zerop exit-code)
