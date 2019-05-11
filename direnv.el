@@ -2,7 +2,7 @@
 
 ;; Author: Wouter Bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.5.0
-;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (with-editor "2.5.10"))
+;; Package-Requires: ((emacs "24.4") (dash "2.12.0"))
 ;; Keywords: direnv, environment, processes, unix, tools
 ;; URL: https://github.com/wbolster/emacs-direnv
 ;;
@@ -22,11 +22,6 @@
 (require 'dash)
 (require 'json)
 (require 'subr-x)
-
-(eval-when-compile
-  (require 'server)
-  (declare-function with-editor-mode "with-editor.el")
-  (declare-function with-editor-async-shell-command "with-editor.el"))
 
 (defgroup direnv nil
   "direnv integration for emacs"
@@ -134,16 +129,6 @@ In these modes, direnv will use `default-directory' instead of
                  (not (file-remote-p directory-name)))
         (direnv-update-directory-environment directory-name)))))
 
-(defun direnv--maybe-enable-with-editor-mode ()
-  "Enable with-editor-mode when run via direnv-edit."
-  ;; This is a dirty hack. See https://github.com/magit/with-editor/issues/23
-  (run-at-time
-   1 nil
-   (lambda ()
-     (with-current-buffer (window-buffer)
-       (when server-buffer-clients
-         (with-editor-mode))))))
-
 (defun direnv--summarise-changes (items)
   "Create a summary string for ITEMS."
   (string-join
@@ -225,17 +210,6 @@ When FORCE-SUMMARY is non-nil or when called interactively, show a summary messa
           (setq exec-path (append (parse-colon-path value) (list exec-directory))))))))
 
 ;;;###autoload
-(defun direnv-edit ()
-  "Edit the .envrc associated with the current directory."
-  (interactive)
-  (require 'with-editor)
-  (let ((display-buffer-alist
-         (cons (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil))
-               display-buffer-alist)))
-    (with-editor-async-shell-command "direnv edit" nil nil))
-  (direnv-update-environment))
-
-;;;###autoload
 (defun direnv-allow ()
   "Run ‘direnv allow’ and update the environment afterwards."
   (interactive)
@@ -262,8 +236,6 @@ visited (local) file."
 
 Since .envrc files are shell scripts, this mode inherits from sh-mode.
 \\{direnv-envrc-mode-map}")
-
-(add-hook 'direnv-envrc-mode-hook #'direnv--maybe-enable-with-editor-mode)
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.envrc\\'" . direnv-envrc-mode))
