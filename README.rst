@@ -8,15 +8,9 @@ emacs-direnv
 .. image:: https://stable.melpa.org/packages/direnv-badge.svg
    :alt: melpa stable badge
 
-.. _direnv: https://direnv.net/
-
-overview
-========
-
 this package provides direnv_ integration for emacs.
 
-.. image:: https://cloud.githubusercontent.com/assets/748944/23811101/c82c40d0-05d4-11e7-8a79-74e1d80fa5cf.png
-   :alt: mandatory screenshot
+.. _direnv: https://direnv.net/
 
 it works by invoking
 ``direnv`` to obtain the environment
@@ -31,8 +25,21 @@ will be looked up in the correct ``$PATH``,
 and will be started
 with the correct environment variables set.
 
+to get started, add this to your ``init.el``:
+
+.. code-block:: elisp
+
+  (use-package direnv
+   :config
+   (direnv-mode))
+
+.. image:: https://cloud.githubusercontent.com/assets/748944/23811101/c82c40d0-05d4-11e7-8a79-74e1d80fa5cf.png
+   :alt: mandatory screenshot
+
 installation
 ============
+
+``direnv.el`` is `available from melpa <https://melpa.org/#/direnv>`_.
 
 with ``use-package``:
 
@@ -40,9 +47,7 @@ with ``use-package``:
 
   (use-package direnv)
 
-manually:
-
-::
+manually::
 
   M-x package-install RET direnv RET
 
@@ -70,6 +75,8 @@ to the direnv environment for the current file.
 the minibuffer will show a message
 with a summary of the changes made to the environment,
 similar to what ``direnv`` does in a shell.
+its sibling command ``direnv-update-directory-environment``
+does the same for buffers that don't have an associated file.
 
 the global minor mode ``direnv-mode`` does the same,
 but automatically updates the emacs environment
@@ -90,11 +97,14 @@ or use the ``use-package`` ``:config`` block:
    :config
    (direnv-mode))
 
-additionally, the ``direnv-edit`` command
-acts like ``direnv edit`` from a shell:
-it edits the ``.envrc`` file
+finally, the ``direnv-allow`` command
+acts like ``direnv allow`` from a shell:
+it allows loading the ``.envrc`` file
 associated with the current directory
 or one of its parent directories.
+this command is useful for new projects
+(always check whether the ``.envrc`` file is trustworthy),
+or after editing the ``.envrc`` file within emacs itself.
 
 configuration
 =============
