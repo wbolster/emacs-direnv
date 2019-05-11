@@ -239,7 +239,7 @@ When FORCE-SUMMARY is non-nil or when called interactively, show a summary messa
 (defun direnv-allow ()
   "Run direnv allow to approve changes and apply them using direnv-update-environment."
   (interactive)
-  (shell-command "direnv allow")
+  (call-process (direnv--detect) nil 0 nil "allow")
   (direnv-update-environment))
 
 ;;;###autoload
