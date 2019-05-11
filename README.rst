@@ -195,6 +195,13 @@ and
 history
 =======
 
+* 2.0.0 (not released)
+
+  * add `direnv-allow` command; see
+    `#43 <https://github.com/wbolster/emacs-direnv/pull/43>`_
+  * remove broken `direnv-edit` command
+    `#20 <https://github.com/wbolster/emacs-direnv/issues/20>`_
+
 * 1.5.0 (2019-03-19)
 
   * handle indirect buffers correctly; see
