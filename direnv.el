@@ -108,10 +108,10 @@ In these modes, direnv will use `default-directory' instead of
                 ;; write the stderr messages to the end of our output buffer
                 (insert-file-contents stderr-tempfile))
               (with-temp-buffer
-                (insert-file-contents stderr-tempfile)
                 (unless (zerop exit-code)
-                  (message "direnv exited %s:\n%s\nOpen buffer \"%s\" for full output"
-                           exit-code (buffer-string) direnv--output-buffer-name))))))
+                  (insert-file-contents stderr-tempfile)
+                  (warn "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
+                        exit-code (buffer-string) direnv--output-buffer-name))))))
       (delete-file stderr-tempfile))))
 
 (defun direnv--enable ()
