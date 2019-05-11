@@ -209,6 +209,8 @@ history
 
   * add `direnv-allow` command; see
     `#43 <https://github.com/wbolster/emacs-direnv/pull/43>`_
+  * use friendlier path formatting in summary message; see
+    `#44 <https://github.com/wbolster/emacs-direnv/pull/44>`_
   * improve handling of direnv output and improve error reporting; see
     `#41 <https://github.com/wbolster/emacs-direnv/issues/41>`_ and
     `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
