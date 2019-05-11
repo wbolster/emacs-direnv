@@ -236,6 +236,13 @@ When FORCE-SUMMARY is non-nil or when called interactively, show a summary messa
   (direnv-update-environment))
 
 ;;;###autoload
+(defun direnv-allow ()
+  "Run ‘direnv allow’ and update the environment afterwards."
+  (interactive)
+  (call-process (direnv--detect) nil 0 nil "allow")
+  (direnv-update-environment))
+
+;;;###autoload
 (define-minor-mode direnv-mode
   "Global minor mode to automatically update the environment using direnv.
 
