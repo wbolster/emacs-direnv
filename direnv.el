@@ -76,9 +76,9 @@ instead of
 (defun direnv--directory ()
   "Return the relevant directory for the current buffer, or nil."
   (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
-	 (file-name (buffer-file-name buffer)))
+         (file-name (buffer-file-name buffer)))
     (cond (file-name (file-name-directory file-name))
-	  ((apply #'derived-mode-p direnv-non-file-modes) default-directory))))
+          ((apply #'derived-mode-p direnv-non-file-modes) default-directory))))
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
