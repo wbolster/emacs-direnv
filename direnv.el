@@ -66,8 +66,10 @@ usually results in coloured output."
 (defcustom direnv-non-file-modes '(eshell-mode dired-mode)
   "List of modes where direnv will update even if the buffer has no file.
 
-In these modes, direnv will use `default-directory' instead of
-`(file-name-directory (buffer-file-name (current-buffer)))'."
+In these modes, or modes derived from them, direnv will use
+  `default-directory'
+instead of
+  `(file-name-directory (buffer-file-name (current-buffer)))'."
   :group 'direnv
   :type '(repeat (symbol :tag "Major mode")))
 
@@ -76,7 +78,7 @@ In these modes, direnv will use `default-directory' instead of
   (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
          (file-name (buffer-file-name buffer)))
     (cond (file-name (file-name-directory file-name))
-          ((member major-mode direnv-non-file-modes) default-directory))))
+          ((apply #'derived-mode-p direnv-non-file-modes) default-directory))))
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
