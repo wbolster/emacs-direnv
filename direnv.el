@@ -63,7 +63,7 @@ usually results in coloured output."
   :group 'direnv
   :type 'boolean)
 
-(defcustom direnv-non-file-modes '(eshell-mode dired-mode)
+(defcustom direnv-non-file-modes '(eshell-mode dired-mode magit-mode)
   "List of modes where direnv will update even if the buffer has no file.
 
 In these modes, or modes derived from them, direnv will use
