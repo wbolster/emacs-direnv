@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 2.0.0
-;; Package-Requires: ((emacs "24.4") (dash "2.12.0"))
+;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (with-editor "20181103"))
 ;; Keywords: direnv, environment, processes, unix, tools
 ;; URL: https://github.com/wbolster/emacs-direnv
 ;;
@@ -22,6 +22,7 @@
 (require 'dash)
 (require 'json)
 (require 'subr-x)
+(require 'with-editor)
 
 (defgroup direnv nil
   "direnv integration for emacs"
@@ -229,6 +230,12 @@ When FORCE-SUMMARY is non-nil or when called interactively, show a summary messa
   (interactive)
   (call-process (direnv--detect) nil 0 nil "allow")
   (direnv-update-environment))
+
+;;;###autoload
+(defun direnv-edit ()
+  (interactive)
+  (with-editor-async-shell-command
+   (concat (direnv--detect) " edit")))
 
 ;;;###autoload
 (define-minor-mode direnv-mode
