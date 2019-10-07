@@ -205,6 +205,18 @@ and
 history
 =======
 
+* 2.x (…)
+
+  * require emacs 25+ (it's 3 years old)
+    `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
+  * fix emacs 25 compatibility issue
+  * also consider derived modes for `direnv-non-file-modes`
+    `#49 <https://github.com/wbolster/emacs-direnv/pull/49>`_
+  * use `direnv` in `magit-mode` by default
+    `#50 <https://github.com/wbolster/emacs-direnv/pull/50>`_
+  * try to avoid opening remote connections
+    `#46 <https://github.com/wbolster/emacs-direnv/pull/46>`_
+
 * 2.0.0 (2019-05-11)
 
   * add `direnv-allow` command; see
