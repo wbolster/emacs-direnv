@@ -1,4 +1,4 @@
-;;; direnv.el --- direnv support -*- lexical-binding: t; -*-
+;;; direnv.el --- Support for direnv -*- lexical-binding: t; -*-
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 2.0.0
