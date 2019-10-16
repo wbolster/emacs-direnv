@@ -210,26 +210,25 @@ history
   * require emacs 25+ (it's 3 years old)
     `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
   * fix emacs 25 compatibility issue
-  * also consider derived modes for `direnv-non-file-modes`
+  * also consider derived modes for ``direnv-non-file-modes``
     `#49 <https://github.com/wbolster/emacs-direnv/pull/49>`_
-  * use `direnv` in `magit-mode` by default
+  * use ``direnv`` in ``magit-mode`` by default
     `#50 <https://github.com/wbolster/emacs-direnv/pull/50>`_
   * try to avoid opening remote connections
     `#46 <https://github.com/wbolster/emacs-direnv/pull/46>`_
-  * prevent `eshell-path-env` getting out-of-sync with `$PATH`
+  * prevent ``eshell-path-env`` getting out-of-sync with ``$PATH``
     `#55 <https://github.com/wbolster/emacs-direnv/pull/55>`_
-
 
 * 2.0.0 (2019-05-11)
 
-  * add `direnv-allow` command; see
+  * add ``direnv-allow`` command; see
     `#43 <https://github.com/wbolster/emacs-direnv/pull/43>`_
   * use friendlier path formatting in summary message; see
     `#44 <https://github.com/wbolster/emacs-direnv/pull/44>`_
   * improve handling of direnv output and improve error reporting; see
     `#41 <https://github.com/wbolster/emacs-direnv/issues/41>`_ and
     `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
-  * remove broken `direnv-edit` command
+  * remove broken ``direnv-edit`` command
     `#20 <https://github.com/wbolster/emacs-direnv/issues/20>`_
 
 * 1.5.0 (2019-03-19)
