@@ -218,6 +218,8 @@ history
     `#46 <https://github.com/wbolster/emacs-direnv/pull/46>`_
   * prevent ``eshell-path-env`` getting out-of-sync with ``$PATH``
     `#55 <https://github.com/wbolster/emacs-direnv/pull/55>`_
+  * use base buffer mode directories for indirect buffers
+    `#51 <https://github.com/wbolster/emacs-direnv/pull/51>`_
 
 * 2.0.0 (2019-05-11)
 
