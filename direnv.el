@@ -227,7 +227,10 @@ When FORCE-SUMMARY is non-nil or when called interactively, show a summary messa
             (value (cdr pair)))
         (setenv name value)
         (when (string-equal name "PATH")
-          (setq exec-path (append (parse-colon-path value) (list exec-directory))))))))
+          (setq exec-path (append (parse-colon-path value) (list exec-directory)))
+          ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
+          (when (derived-mode-p 'eshell-mode)
+            (setq eshell-path-env value)))))))
 
 ;;;###autoload
 (defun direnv-allow ()
