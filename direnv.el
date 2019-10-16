@@ -73,6 +73,8 @@ instead of
   :group 'direnv
   :type '(repeat (symbol :tag "Major mode")))
 
+(defvar eshell-path-env)
+
 (defun direnv--directory ()
   "Return the relevant directory for the current buffer, or nil."
   (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
