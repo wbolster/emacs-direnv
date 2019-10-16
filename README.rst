@@ -216,6 +216,9 @@ history
     `#50 <https://github.com/wbolster/emacs-direnv/pull/50>`_
   * try to avoid opening remote connections
     `#46 <https://github.com/wbolster/emacs-direnv/pull/46>`_
+  * prevent `eshell-path-env` getting out-of-sync with `$PATH`
+    `#55 <https://github.com/wbolster/emacs-direnv/pull/55>`_
+
 
 * 2.0.0 (2019-05-11)
 
