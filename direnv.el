@@ -83,7 +83,7 @@ instead of
          (file-name (buffer-file-name buffer)))
     (cond (file-name
            (file-name-directory file-name))
-          ((apply #'provided-mode-derived-p mode direnv-non-file-modes)
+          ((apply #'direnv--provided-mode-derived-p mode direnv-non-file-modes)
            default-directory))))
 
 (defun direnv--export (directory)
@@ -195,6 +195,14 @@ the environment changes."
     (if paths
         (message "direnv: %s (%s)" summary paths)
       (message "direnv: %s" summary))))
+
+(defun direnv--provided-mode-derived-p (mode &rest modes)
+  "Non-nil if MODE is derived from one of MODES.
+
+Same as ‘provided-mode-derived-p’ which is Emacs 26.1+ only."
+  (while (and (not (memq mode modes))
+              (setq mode (get mode 'derived-mode-parent))))
+  mode)
 
 ;;;###autoload
 (defun direnv-update-environment (&optional file-name force-summary)
