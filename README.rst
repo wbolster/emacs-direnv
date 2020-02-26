@@ -220,6 +220,9 @@ history
     `#55 <https://github.com/wbolster/emacs-direnv/pull/55>`_
   * use base buffer mode directories for indirect buffers
     `#51 <https://github.com/wbolster/emacs-direnv/pull/51>`_
+  * include ``comint-mode`` and ``compilation-mode`` in
+    ``direnv-non-file-modes`` by default
+    `#58 <https://github.com/wbolster/emacs-direnv/pull/58>`_
 
 * 2.0.0 (2019-05-11)
 

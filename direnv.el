@@ -63,8 +63,9 @@ usually results in coloured output."
   :group 'direnv
   :type 'boolean)
 
-(defcustom direnv-non-file-modes '(eshell-mode dired-mode magit-mode)
-  "List of modes where direnv will update even if the buffer has no file.
+(defcustom direnv-non-file-modes
+  '(comint-mode compilation-mode dired-mode eshell-mode magit-mode)
+  "Major modes where direnv will update even if the buffer is not a file.
 
 In these modes, or modes derived from them, direnv will use
   `default-directory'
