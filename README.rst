@@ -209,7 +209,7 @@ history
 
   * require emacs 25+ (it's 3 years old)
     `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
-  * fix emacs 25 compatibility issue
+  * fix emacs 25 compatibility issues
   * also consider derived modes for ``direnv-non-file-modes``
     `#49 <https://github.com/wbolster/emacs-direnv/pull/49>`_
   * use ``direnv`` in ``magit-mode`` by default
