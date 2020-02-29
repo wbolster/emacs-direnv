@@ -204,6 +204,9 @@ Same as ‘provided-mode-derived-p’ which is Emacs 26.1+ only."
               (setq mode (get mode 'derived-mode-parent))))
   mode)
 
+(when (fboundp 'provided-mode-derived-p)
+  (defalias 'direnv--provided-mode-derived-p 'provided-mode-derived-p))
+
 ;;;###autoload
 (defun direnv-update-environment (&optional file-name force-summary)
   "Update the environment for FILE-NAME.
