@@ -205,7 +205,7 @@ and
 history
 =======
 
-* 2.x (…)
+* 2.1.0 (2020-02-29)
 
   * require emacs 25+ (it's 3 years old)
     `#42 <https://github.com/wbolster/emacs-direnv/pull/42>`_
