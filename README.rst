@@ -169,8 +169,8 @@ the available settings are outlined below.
   .. code-block:: elisp
 
     (use-package direnv
-     :custom
-     (warning-suppress-types '((direnv))))
+     :config
+     (add-to-list 'warning-suppress-types '(direnv)))
 
 
 troubleshooting
