@@ -114,8 +114,10 @@ instead of
               (with-temp-buffer
                 (unless (zerop exit-code)
                   (insert-file-contents stderr-tempfile)
-                  (warn "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
-                        exit-code (buffer-string) direnv--output-buffer-name))))))
+                  (display-warning 'direnv
+                    (format-message
+                      "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
+                      exit-code (buffer-string) direnv--output-buffer-name)))))))
       (delete-file stderr-tempfile))))
 
 (defun direnv--file-size (name)

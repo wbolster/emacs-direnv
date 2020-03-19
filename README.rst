@@ -159,6 +159,19 @@ the available settings are outlined below.
      :config
      (add-to-list 'direnv-non-file-modes 'foobar-mode))
 
+* ``warning-suppress-types``
+
+  this is an emacs variable with a list of warning types
+  which are not displayed immediately.
+  use it to hide error messages from ``direnv``.
+  example usage (with ``use-package``):
+
+  .. code-block:: elisp
+
+    (use-package direnv
+     :custom
+     (warning-suppress-types '((direnv))))
+
 
 troubleshooting
 ===============
@@ -176,6 +189,9 @@ but for non-fatal problems
 such as incorrect ``.envrc`` files
 you may have to open this buffer manually for inspection
 of the full output of the last ``direnv`` call.
+
+to hide direnv errors such as ``.envrc is blocked``,
+customize the variable ``warning-suppress-types``.
 
 
 contributing
