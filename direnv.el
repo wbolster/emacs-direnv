@@ -41,6 +41,9 @@
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
 
+(defvar direnv--hooks '(post-command-hook before-hack-local-variables-hook)
+  "Hooks that ‘direnv-mode’ should hook into.")
+
 (defcustom direnv-always-show-summary t
   "Whether to show a summary message of environment changes on every change.
 
@@ -128,12 +131,14 @@ instead of
 
 (defun direnv--enable ()
   "Enable direnv mode."
-  (add-hook 'post-command-hook #'direnv--maybe-update-environment)
+  (--each direnv--hooks
+    (add-hook it #'direnv--maybe-update-environment))
   (direnv--maybe-update-environment))
 
 (defun direnv--disable ()
   "Disable direnv mode."
-  (remove-hook 'post-command-hook #'direnv--maybe-update-environment))
+  (--each direnv--hooks
+    (remove-hook it #'direnv--maybe-update-environment)))
 
 (defun direnv--maybe-update-environment ()
   "Maybe update the environment."
