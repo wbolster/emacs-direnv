@@ -35,7 +35,7 @@
 (defvar direnv--output-buffer-name "*direnv*"
   "Name of the buffer filled with the last direnv output.")
 
-(defvar direnv--installed (direnv--detect)
+(defvar direnv--executable (direnv--detect)
   "Whether direnv is installed.")
 
 (defvar direnv--active-directory nil
@@ -91,9 +91,9 @@ instead of
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
-  (unless direnv--installed
-    (setq direnv--installed (direnv--detect)))
-  (unless direnv--installed
+  (unless direnv--executable
+    (setq direnv--executable (direnv--detect)))
+  (unless direnv--executable
     (user-error "Could not find the direnv executable. Is exec-path correct?"))
   (let ((environment process-environment)
         (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
@@ -102,7 +102,10 @@ instead of
           (erase-buffer)
           (let* ((default-directory directory)
                  (process-environment environment)
-                 (exit-code (call-process "direnv" nil `(t ,stderr-tempfile) nil "export" "json")))
+                 (exit-code (call-process
+                             direnv--executable nil
+                             `(t ,stderr-tempfile) nil
+                             "export" "json")))
             (prog1
                 (unless (zerop (buffer-size))
                   (goto-char (point-max))
