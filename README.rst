@@ -221,6 +221,19 @@ and
 history
 =======
 
+* 2.2.0 (…)
+
+  * allow user to hide warnings and errors from direnv
+    `#61 <https://github.com/wbolster/emacs-direnv/pull/61>`_
+
+  * use both ``post-command-hook`` and
+    ``before-hack-local-variables-hook`` when ``direnv-mode`` is used.
+    this should cause direnv to load earlier which can avoid certain
+    issues when opening a file in a direnv controlled directory for
+    the first time. see
+    `#61 <https://github.com/wbolster/emacs-direnv/pull/61>`_ and
+    `#17 <https://github.com/wbolster/emacs-direnv/issues/17>`_
+
 * 2.1.0 (2020-02-29)
 
   * require emacs 25+ (it's 3 years old)
