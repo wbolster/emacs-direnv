@@ -36,7 +36,7 @@
   "Name of the buffer filled with the last direnv output.")
 
 (defvar direnv--executable (direnv--detect)
-  "Whether direnv is installed.")
+  "Detected path of the direnv executable.")
 
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
