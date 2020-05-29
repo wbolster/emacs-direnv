@@ -81,11 +81,13 @@ use `default-directory', since there is no file name (or directory)."
   "Return the relevant directory for the current buffer, or nil."
   (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
          (mode (buffer-local-value 'major-mode buffer))
-         (file-name (buffer-file-name buffer)))
-    (cond (file-name
-           (file-name-directory file-name))
-          ((apply #'direnv--provided-mode-derived-p mode direnv-non-file-modes)
-           default-directory))))
+         (file-name (buffer-file-name buffer))
+         (buffer-directory
+          (cond (file-name
+                 (file-name-directory file-name))
+                ((apply #'direnv--provided-mode-derived-p mode direnv-non-file-modes)
+                 default-directory))))
+    buffer-directory))
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
