@@ -80,7 +80,7 @@ use `default-directory', since there is no file name (or directory)."
 (defun direnv--directory ()
   "Return the relevant directory for the current buffer, or nil."
   (let* ((buffer (or (buffer-base-buffer) (current-buffer)))
-         (mode (with-current-buffer buffer major-mode))
+         (mode (buffer-local-value 'major-mode buffer))
          (file-name (buffer-file-name buffer)))
     (cond (file-name
            (file-name-directory file-name))
