@@ -70,10 +70,8 @@ usually results in coloured output."
   '(comint-mode compilation-mode dired-mode eshell-mode magit-mode)
   "Major modes where direnv will update even if the buffer is not a file.
 
-In these modes, or modes derived from them, direnv will use
-  `default-directory'
-instead of
-  `(file-name-directory (buffer-file-name (current-buffer)))'."
+In buffers using these modes, or modes derived from them, direnv will
+use `default-directory', since there is no file name (or directory)."
   :group 'direnv
   :type '(repeat (symbol :tag "Major mode")))
 
