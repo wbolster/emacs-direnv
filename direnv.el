@@ -42,7 +42,7 @@
 
 (defun direnv--detect ()
   "Detect the direnv executable."
-  (executable-find "direnv"))
+  (executable-find "direnv" t))
 
 (defvar direnv--output-buffer-name "*direnv*"
   "Name of the buffer filled with the last direnv output.")
@@ -113,8 +113,10 @@ use `default-directory', since there is no file name (or directory)."
         (with-current-buffer (get-buffer-create direnv--output-buffer-name)
           (erase-buffer)
           (let* ((default-directory directory)
-                 (process-environment environment)
-                 (exit-code (call-process
+                 (process-environment (if (file-remote-p default-directory)
+					  tramp-remote-process-environment
+					environment))
+                 (exit-code (process-file
                              direnv--executable nil
                              `(t ,stderr-tempfile) nil
                              "export" "json")))
@@ -255,8 +257,6 @@ a summary message."
         (items)
         (summary)
         (show-summary (or force-summary (called-interactively-p 'interactive))))
-    (when (file-remote-p directory)
-      (user-error "Cannot use direnv for remote files"))
     (setq direnv--active-directory directory
           items (direnv--export direnv--active-directory)
           summary (direnv--summarise-changes items))
@@ -266,8 +266,13 @@ a summary message."
       (direnv--show-summary summary old-directory direnv--active-directory))
     (dolist (pair items)
       (let ((name (car pair))
-            (value (cdr pair)))
+            (value (cdr pair))
+	    (process-environment (if (file-remote-p directory)
+				     tramp-remote-process-environment
+				   process-environment)))
         (setenv name value)
+	(when (file-remote-p directory)
+	  (setq tramp-remote-process-environment process-environment))
         (when (string-equal name "PATH")
           (setq exec-path (append (parse-colon-path value) (list exec-directory)))
           ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
@@ -278,7 +283,7 @@ a summary message."
 (defun direnv-allow ()
   "Run ‘direnv allow’ and update the environment afterwards."
   (interactive)
-  (call-process (direnv--detect) nil 0 nil "allow")
+  (process-file (direnv--detect) nil 0 nil "allow")
   (direnv-update-environment))
 
 ;;;###autoload
