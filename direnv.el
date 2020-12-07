@@ -159,7 +159,6 @@ use `default-directory', since there is no file name (or directory)."
   (with-current-buffer (window-buffer)
     (let ((directory-name (direnv--directory)))
       (when (and directory-name
-                 (not (file-remote-p directory-name))
                  (not (string-equal direnv--active-directory directory-name))
                  (file-directory-p directory-name))
         (direnv-update-directory-environment directory-name)))))
