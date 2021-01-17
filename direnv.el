@@ -20,6 +20,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'diff-mode)
 (require 'json)
 (require 'subr-x)
 
