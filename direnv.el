@@ -39,6 +39,9 @@
 (defvar direnv--executable (direnv--detect)
   "Detected path of the direnv executable.")
 
+(defvar direnv--executable-args '("export" "json")
+  "Direnv executable args")
+
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
 
@@ -103,10 +106,9 @@ use `default-directory', since there is no file name (or directory)."
           (erase-buffer)
           (let* ((default-directory directory)
                  (process-environment environment)
-                 (exit-code (call-process
-                             direnv--executable nil
-                             `(t ,stderr-tempfile) nil
-                             "export" "json")))
+                 (exit-code (apply 'call-process
+                                   (append `(,direnv--executable nil (t ,stderr-tempfile) nil)
+                                           direnv--executable-args))))
             (prog1
                 (unless (zerop (buffer-size))
                   (goto-char (point-max))
