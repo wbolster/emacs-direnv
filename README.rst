@@ -223,6 +223,8 @@ history
 
 * 2.2.0 (…)
 
+  * depend on emacs 25.1+
+
   * allow user to hide warnings and errors from direnv
     `#61 <https://github.com/wbolster/emacs-direnv/pull/61>`_
 
@@ -233,6 +235,13 @@ history
     the first time. see
     `#61 <https://github.com/wbolster/emacs-direnv/pull/61>`_ and
     `#17 <https://github.com/wbolster/emacs-direnv/issues/17>`_
+
+  * load ``diff-mode`` to avoid ‘invalid face reference’ warnings
+    `#69 <https://github.com/wbolster/emacs-direnv/issues/69>`_
+
+  * explicitly set `json-object-type` when parsing json
+    to avoid potential conflicts with other packages
+    `#72 <https://github.com/wbolster/emacs-direnv/pull/72>`_
 
 * 2.1.0 (2020-02-29)
 
