@@ -25,7 +25,7 @@
 (require 'subr-x)
 
 (defgroup direnv nil
-  "direnv integration for emacs"
+  "Direnv integration for Emacs."
   :group 'environment
   :prefix "direnv-")
 
@@ -95,7 +95,7 @@ use `default-directory', since there is no file name (or directory)."
   (unless direnv--executable
     (setq direnv--executable (direnv--detect)))
   (unless direnv--executable
-    (user-error "Could not find the direnv executable. Is exec-path correct?"))
+    (user-error "Could not find the direnv executable.  Is `exec-path' correct?"))
   (let ((environment process-environment)
         (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
     (unwind-protect
@@ -286,7 +286,7 @@ visited (local) file."
   sh-mode "envrc"
   "Major mode for .envrc files as used by direnv.
 
-Since .envrc files are shell scripts, this mode inherits from sh-mode.
+Since .envrc files are shell scripts, this mode inherits from `sh-mode'.
 \\{direnv-envrc-mode-map}")
 
 ;;;###autoload
