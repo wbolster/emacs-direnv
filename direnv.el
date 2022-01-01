@@ -14,8 +14,14 @@
 
 ;;; Commentary:
 
-;; This package provides direnv integration for Emacs.
-;; See the README for more information.
+;; Direnv (https://direnv.net/) integration for Emacs.
+
+;; Enable the global `direnv-mode' minor mode to have inferior shells,
+;; linters, compilers, and test runners start with the intended
+;; environmental variables.
+
+;; Using the command `direnv-allow' you can mark a ".envrc" as safe
+;; (remember to always first check if it trustworthy)
 
 ;;; Code:
 
