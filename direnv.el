@@ -1,4 +1,4 @@
-;;; direnv.el --- Support for direnv -*- lexical-binding: t; -*-
+;;; direnv.el --- direnv integration -*- lexical-binding: t; -*-
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 2.2.0
@@ -14,14 +14,16 @@
 
 ;;; Commentary:
 
-;; Direnv (https://direnv.net/) integration for Emacs.
-
-;; Enable the global `direnv-mode' minor mode to have inferior shells,
-;; linters, compilers, and test runners start with the intended
-;; environmental variables.
-
-;; Using the command `direnv-allow' you can mark a ".envrc" as safe
-;; (remember to always first check if it trustworthy)
+;; direnv (https://direnv.net/) integration for emacs.
+;;
+;; use ‘direnv-update-environment’ to manually update the emacs
+;; environment so that inferior shells, linters, compilers, and test
+;; runners start with the intended environmental variables.
+;;
+;; enable the global ‘direnv-mode’ minor mode to do this
+;; automagically upon switching buffers.
+;;
+;; use ‘direnv-allow’ to mark a ".envrc" as safe.
 
 ;;; Code:
 
