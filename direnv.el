@@ -207,7 +207,7 @@ NEW-DIRECTORY, but OLD-DIRECTORY can be nil."
 (defun direnv--show-summary (summary old-directory new-directory)
   "Show a SUMMARY message.
 
-OLD-DIRECTORY and NEW-DIRECTORY are the directories before and afther
+OLD-DIRECTORY and NEW-DIRECTORY are the directories before and after
 the environment changes."
   (let ((summary
          (if (string-empty-p summary) "no changes" summary))
