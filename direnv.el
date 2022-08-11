@@ -292,13 +292,26 @@ visited (local) file."
       (direnv--enable)
     (direnv--disable)))
 
+(defvar direnv-envrc-stdlib-functions
+  '("MANPATH_add" "PATH_add" "PATH_rm" "direnv_apply_dump" "direnv_layout_dir"
+    "direnv_load" "direnv_version" "dotenv" "dotenv_if_exists"
+    "env_vars_required" "expand_path" "fetchurl" "find_up" "has" "join_args"
+    "layout" "load_prefix" "log_error" "log_status" "on_git_branch" "path_add"
+    "path_rm" "rvm" "semver_search" "source_env" "source_env_if_exists"
+    "source_up" "source_up_if_exists" "source_url" "strict_env" "unstrict_env"
+    "use" "user_rel_path" "watch_dir" "watch_file")
+  "direnv stdlib functions.")
+
 ;;;###autoload
 (define-derived-mode direnv-envrc-mode
   sh-mode "envrc"
   "Major mode for .envrc files as used by direnv.
 
 Since .envrc files are shell scripts, this mode inherits from ‘sh-mode’.
-\\{direnv-envrc-mode-map}")
+\\{direnv-envrc-mode-map}"
+  (font-lock-add-keywords
+   nil `((,(regexp-opt direnv-envrc-stdlib-functions 'symbols)
+          (0 font-lock-keyword-face)))))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.envrc\\'" . direnv-envrc-mode))
