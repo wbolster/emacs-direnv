@@ -53,9 +53,6 @@
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
 
-(defvar direnv--hooks '(post-command-hook before-hack-local-variables-hook)
-  "Hooks that ‘direnv-mode’ should hook into.")
-
 (defcustom direnv-always-show-summary t
   "Whether to show a summary message of environment changes on every change.
 
@@ -98,7 +95,8 @@ use `default-directory', since there is no file name (or directory)."
           (cond (file-name
                  (file-name-directory file-name))
                 ((apply #'direnv--provided-mode-derived-p mode direnv-non-file-modes)
-                 default-directory))))
+                 default-directory)
+                (t  "~/"))))
     buffer-directory))
 
 (defun direnv--export (directory)
@@ -148,24 +146,48 @@ use `default-directory', since there is no file name (or directory)."
 
 (defun direnv--enable ()
   "Enable direnv mode."
-  (--each direnv--hooks
-    (add-hook it #'direnv--maybe-update-environment))
-  (direnv--maybe-update-environment))
+  (setq direnv--active-directory default-directory)
+  (add-hook 'change-major-mode-after-body-hook #'direnv--maybe-update-environment)
+  (add-to-list 'window-buffer-change-functions #'direnv--maybe-update-environment-wsc)
+  (add-to-list 'window-selection-change-functions #'direnv--maybe-update-environment-wsc))
 
 (defun direnv--disable ()
   "Disable direnv mode."
-  (--each direnv--hooks
-    (remove-hook it #'direnv--maybe-update-environment)))
+  (remove-hook 'change-major-mode-after-body-hook #'direnv--maybe-update-environment)
+  (setq window-buffer-change-functions
+        (delq #'direnv--maybe-update-environment-wsc window-buffer-change-functions))
+  (setq window-selection-change-functions
+        (delq #'direnv--maybe-update-environment-wsc window-selection-change-functions)))
 
 (defun direnv--maybe-update-environment ()
-  "Maybe update the environment."
-  (with-current-buffer (window-buffer)
+  "Maybe update the environment.
+
+If the current buffer's directory is different from the last
+active directory, change the active directory to it and update
+the environment."
+  (unless (minibufferp (current-buffer))
     (let ((directory-name (direnv--directory)))
-      (when (and directory-name
-                 (not (file-remote-p directory-name))
+      (when (and (not (file-remote-p directory-name))
                  (not (string-equal direnv--active-directory directory-name))
                  (file-directory-p directory-name))
         (direnv-update-directory-environment directory-name)))))
+
+(defun direnv--maybe-update-environment-wsc (frame)
+  "Maybe update the environment after a window state change.
+
+FRAME is the frame where it was selected, or deselected, or at
+least one window has been added, deleted, assigned another buffer
+or the selected window has changed since the last time window
+change functions were run.
+
+If FRAME is not selected or is a child frame, do nothing.
+Otherwise, attempt to update the environment based on the
+directory of the selected window's buffer."
+  (unless (or (not (eq (selected-frame) frame))
+              (and (fboundp 'frame-parent)
+                   (frame-parent frame)))
+    (with-current-buffer (window-buffer (frame-selected-window frame))
+      (direnv--maybe-update-environment))))
 
 (defun direnv--summarise-changes (items)
   "Create a summary string for ITEMS."
