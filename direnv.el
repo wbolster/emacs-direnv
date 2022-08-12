@@ -14,12 +14,12 @@
 
 ;;; Commentary:
 
-;; direnv (https://direnv.net/) integration for emacs. see the readme
-;; at https://github.com/wbolster/emacs-direnv for details.
+;; direnv (https://direnv.net/) integration for Emacs.  See the readme at
+;; https://github.com/wbolster/emacs-direnv for details.
 ;;
 ;; quick usage instructions for those familiar with direnv:
 ;;
-;; - use ‘direnv-update-environment’ to manually update the emacs
+;; - use ‘direnv-update-environment’ to manually update the Emacs
 ;;   environment so that inferior shells, linters, compilers, and test
 ;;   runners start with the intended environmental variables.
 ;;
@@ -36,7 +36,7 @@
 (require 'subr-x)
 
 (defgroup direnv nil
-  "direnv integration for Emacs"
+  "`direnv' integration for Emacs."
   :group 'environment
   :prefix "direnv-")
 
@@ -106,7 +106,7 @@ use `default-directory', since there is no file name (or directory)."
   (unless direnv--executable
     (setq direnv--executable (direnv--detect)))
   (unless direnv--executable
-    (user-error "Could not find the direnv executable. Is ‘exec-path’ correct?"))
+    (user-error "Could not find the direnv executable.  Is ‘exec-path’ correct?"))
   (let ((environment process-environment)
         (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
     (unwind-protect
@@ -247,7 +247,8 @@ See `direnv-update-directory-environment' for FORCE-SUMMARY."
 (defun direnv-update-directory-environment (&optional directory force-summary)
   "Update the environment for DIRECTORY.
 
-When FORCE-SUMMARY is non-nil or when called interactively, show a summary message."
+When FORCE-SUMMARY is non-nil or when called interactively, show
+a summary message."
   (interactive)
   (let ((directory (or directory default-directory))
         (old-directory direnv--active-directory)
@@ -300,7 +301,7 @@ visited (local) file."
     "path_rm" "rvm" "semver_search" "source_env" "source_env_if_exists"
     "source_up" "source_up_if_exists" "source_url" "strict_env" "unstrict_env"
     "use" "user_rel_path" "watch_dir" "watch_file")
-  "direnv stdlib functions.")
+  "`direnv' stdlib functions.")
 
 ;;;###autoload
 (define-derived-mode direnv-envrc-mode
