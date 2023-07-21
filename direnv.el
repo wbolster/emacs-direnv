@@ -42,13 +42,10 @@
 
 (defun direnv--detect ()
   "Detect the direnv executable."
-  (executable-find "direnv"))
+  (executable-find "direnv" t))
 
 (defvar direnv--output-buffer-name "*direnv*"
   "Name of the buffer filled with the last direnv output.")
-
-(defvar direnv--executable (direnv--detect)
-  "Detected path of the direnv executable.")
 
 (defvar direnv--active-directory nil
   "Name of the directory for which direnv has most recently ran.")
@@ -103,21 +100,21 @@ use `default-directory', since there is no file name (or directory)."
 
 (defun direnv--export (directory)
   "Call direnv for DIRECTORY and return the parsed result."
-  (unless direnv--executable
-    (setq direnv--executable (direnv--detect)))
-  (unless direnv--executable
-    (user-error "Could not find the direnv executable.  Is ‘exec-path’ correct?"))
   (let ((environment process-environment)
         (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
     (unwind-protect
         (with-current-buffer (get-buffer-create direnv--output-buffer-name)
           (erase-buffer)
           (let* ((default-directory directory)
-                 (process-environment environment)
-                 (exit-code (call-process
-                             direnv--executable nil
-                             `(t ,stderr-tempfile) nil
-                             "export" "json")))
+                 (process-environment (if (file-remote-p default-directory)
+					  tramp-remote-process-environment
+					environment))
+		 (direnv--executable (direnv--detect))
+                 (exit-code (if (null direnv--executable)
+				-1
+			      (process-file direnv--executable nil
+					    `(t ,stderr-tempfile) nil
+					    "export" "json"))))
             (prog1
                 (unless (zerop (buffer-size))
                   (goto-char (point-max))
@@ -162,7 +159,6 @@ use `default-directory', since there is no file name (or directory)."
   (with-current-buffer (window-buffer)
     (let ((directory-name (direnv--directory)))
       (when (and directory-name
-                 (not (file-remote-p directory-name))
                  (not (string-equal direnv--active-directory directory-name))
                  (file-directory-p directory-name))
         (direnv-update-directory-environment directory-name)))))
@@ -255,8 +251,6 @@ a summary message."
         (items)
         (summary)
         (show-summary (or force-summary (called-interactively-p 'interactive))))
-    (when (file-remote-p directory)
-      (user-error "Cannot use direnv for remote files"))
     (setq direnv--active-directory directory
           items (direnv--export direnv--active-directory)
           summary (direnv--summarise-changes items))
@@ -266,8 +260,13 @@ a summary message."
       (direnv--show-summary summary old-directory direnv--active-directory))
     (dolist (pair items)
       (let ((name (car pair))
-            (value (cdr pair)))
+            (value (cdr pair))
+	    (process-environment (if (file-remote-p directory)
+				     tramp-remote-process-environment
+				   process-environment)))
         (setenv name value)
+	(when (file-remote-p directory)
+	  (setq tramp-remote-process-environment process-environment))
         (when (string-equal name "PATH")
           (setq exec-path (append (parse-colon-path value) (list exec-directory)))
           ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
@@ -281,7 +280,7 @@ a summary message."
 (defun direnv-allow ()
   "Run ‘direnv allow’ and update the environment afterwards."
   (interactive)
-  (call-process (direnv--detect) nil 0 nil "allow")
+  (process-file (direnv--detect) nil 0 nil "allow")
   (direnv-update-environment))
 
 ;;;###autoload
