@@ -271,8 +271,11 @@ a summary message."
         (when (string-equal name "PATH")
           (setq exec-path (append (parse-colon-path value) (list exec-directory)))
           ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
+          ;; eshell-path-env is deprecated in newer versions of Emacs
           (when (derived-mode-p 'eshell-mode)
-            (setq eshell-path-env value)))))))
+            (if (fboundp 'eshell-set-path)
+                (eshell-set-path value)
+              (setq eshell-path-env value))))))))
 
 ;;;###autoload
 (defun direnv-allow ()
