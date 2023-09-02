@@ -30,6 +30,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'dash)
 (require 'diff-mode)
 (require 'json)
@@ -46,7 +47,7 @@
       (user-error "Could not find the direnv executable.  Is ‘exec-path’ correct?")))
 
 (defvar direnv--output-buffer-name "*direnv*"
-  "Name of the buffer filled with the last direnv output.")
+  "Name of the buffer with direnv stderr.")
 
 (defvar direnv--executable (ignore-errors (direnv--detect))
   "Detected path of the direnv executable.")
@@ -56,6 +57,9 @@
 
 (defvar direnv--hooks '(post-command-hook before-hack-local-variables-hook)
   "Hooks that ‘direnv-mode’ should hook into.")
+
+(defvar direnv--i 0
+  "Private counter to create unique hidden buffers")
 
 (defcustom direnv-always-show-summary t
   "Whether to show a summary message of environment changes on every change.
@@ -102,42 +106,50 @@ use `default-directory', since there is no file name (or directory)."
                  default-directory))))
     buffer-directory))
 
-(defun direnv--export (directory)
-  "Call direnv for DIRECTORY and return the parsed result."
+(defun direnv--export (directory callback)
+  "Call direnv for DIRECTORY and pass the result to the CALLBACK.
+
+On error a user message is printed, and the CALLBACK is not
+called. If direnv produced no output at all, nothing is done: no
+CALLBACK, no user message, no error."
   (unless direnv--executable
     (setq direnv--executable (direnv--detect)))
-  (let ((environment process-environment)
-        (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
-    (unwind-protect
-        (with-current-buffer (get-buffer-create direnv--output-buffer-name)
-          (erase-buffer)
-          (let* ((default-directory directory)
-                 (process-environment environment)
-                 (exit-code (call-process
-                             direnv--executable nil
-                             `(t ,stderr-tempfile) nil
-                             "export" "json")))
-            (prog1
-                (unless (zerop (buffer-size))
-                  (goto-char (point-max))
-                  (re-search-backward "^{")
-                  (let ((json-key-type 'string)
-                        (json-object-type 'alist))
-                    (json-read-object)))
-              (unless (zerop (direnv--file-size stderr-tempfile))
-                (goto-char (point-max))
-                (unless (zerop (buffer-size))
-                  (insert "\n\n"))
-                (insert-file-contents stderr-tempfile))
-              (with-temp-buffer
-                (unless (zerop exit-code)
-                  (insert-file-contents stderr-tempfile)
-                  (display-warning
-                   'direnv
-                   (format-message
-                    "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
-                    exit-code (buffer-string) direnv--output-buffer-name)))))))
-      (delete-file stderr-tempfile))))
+  (let ((calling-buffer (current-buffer))
+        ;; Cannot use temp buffer because the lexical scope ends before the
+        ;; async lifetime, causing the temporary buffer to be cleaned up before
+        ;; the process is done.
+        (stdout-buffer (format " *direnv %d*" (cl-incf direnv--i)))
+        (environment process-environment))
+    (cl-flet* ((on-success ()
+                 (with-current-buffer stdout-buffer
+                   (unless (= 0 (buffer-size))
+                     (goto-char (point-min))
+                     (let ((json-key-type 'string)
+                           (json-object-type 'alist))
+                       (funcall callback (json-read-object))))))
+               (on-error (exit-code)
+                 (display-warning
+                  'direnv
+                  (format-message
+                   "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
+                   exit-code
+                   (with-current-buffer direnv--output-buffer-name (buffer-string))
+                   direnv--output-buffer-name)))
+               (sentinel (proc event)
+                 (cond
+                  ((equal event "finished\n")
+                   (on-success))
+                  ((process-live-p proc)) ;; Wait
+                  (t
+                   (on-error (process-exit-status proc))))))
+      (let* ((default-directory directory)
+             (process-environment environment))
+        (make-process :name (format "direnv %s" directory)
+                      :buffer stdout-buffer
+                      :command `(,direnv--executable "export" "json")
+                      :noquery t
+                      :stderr direnv--output-buffer-name
+                      :sentinel #'sentinel)))))
 
 (defun direnv--file-size (name)
   "Get the file size for a file NAME."
@@ -230,6 +242,25 @@ Same as ‘provided-mode-derived-p’ which is Emacs 26.1+ only."
 (when (fboundp 'provided-mode-derived-p)
   (defalias 'direnv--provided-mode-derived-p 'provided-mode-derived-p))
 
+(defun direnv--callback (items show-summary old-directory)
+  (let ((summary (direnv--summarise-changes items)))
+    (when (and direnv-always-show-summary (not (string-empty-p summary)))
+      (setq show-summary t))
+    (when show-summary
+      (direnv--show-summary summary old-directory direnv--active-directory))
+    (dolist (pair items)
+      (let ((name (car pair))
+            (value (cdr pair)))
+        (setenv name value)
+        (when (string-equal name "PATH")
+          (setq exec-path (append (parse-colon-path value) (list exec-directory)))
+          ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
+          ;; eshell-path-env is deprecated in newer versions of Emacs
+          (when (derived-mode-p 'eshell-mode)
+            (if (fboundp 'eshell-set-path)
+                (eshell-set-path value)
+              (setq eshell-path-env value))))))))
+
 ;;;###autoload
 (defun direnv-update-environment (&optional file-name force-summary)
   "Update the environment for FILE-NAME.
@@ -251,30 +282,13 @@ a summary message."
   (interactive)
   (let ((directory (or directory default-directory))
         (old-directory direnv--active-directory)
-        (items)
-        (summary)
         (show-summary (or force-summary (called-interactively-p 'interactive))))
     (when (file-remote-p directory)
       (user-error "Cannot use direnv for remote files"))
-    (setq direnv--active-directory directory
-          items (direnv--export direnv--active-directory)
-          summary (direnv--summarise-changes items))
-    (when (and direnv-always-show-summary (not (string-empty-p summary)))
-      (setq show-summary t))
-    (when show-summary
-      (direnv--show-summary summary old-directory direnv--active-directory))
-    (dolist (pair items)
-      (let ((name (car pair))
-            (value (cdr pair)))
-        (setenv name value)
-        (when (string-equal name "PATH")
-          (setq exec-path (append (parse-colon-path value) (list exec-directory)))
-          ;; Prevent `eshell-path-env` getting out-of-sync with $PATH:
-          ;; eshell-path-env is deprecated in newer versions of Emacs
-          (when (derived-mode-p 'eshell-mode)
-            (if (fboundp 'eshell-set-path)
-                (eshell-set-path value)
-              (setq eshell-path-env value))))))))
+    (setq direnv--active-directory directory)
+    (direnv--export direnv--active-directory
+                    (lambda (items)
+                      (direnv--callback items show-summary old-directory)))))
 
 ;;;###autoload
 (defun direnv-allow ()
