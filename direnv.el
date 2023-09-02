@@ -58,9 +58,6 @@
 (defvar direnv--hooks '(post-command-hook before-hack-local-variables-hook)
   "Hooks that ‘direnv-mode’ should hook into.")
 
-(defvar direnv--i 0
-  "Private counter to create unique hidden buffers")
-
 (defcustom direnv-always-show-summary t
   "Whether to show a summary message of environment changes on every change.
 
@@ -106,7 +103,7 @@ use `default-directory', since there is no file name (or directory)."
                  default-directory))))
     buffer-directory))
 
-(defun direnv--export (directory callback)
+(defun direnv--export (directory callback &optional retry)
   "Call direnv for DIRECTORY and pass the result to the CALLBACK.
 
 On error a user message is printed, and the CALLBACK is not
@@ -114,42 +111,65 @@ called. If direnv produced no output at all, nothing is done: no
 CALLBACK, no user message, no error."
   (unless direnv--executable
     (setq direnv--executable (direnv--detect)))
-  (let ((calling-buffer (current-buffer))
-        ;; Cannot use temp buffer because the lexical scope ends before the
+  (let (;; Cannot use temp buffer because the lexical scope ends before the
         ;; async lifetime, causing the temporary buffer to be cleaned up before
-        ;; the process is done.
-        (stdout-buffer (format " *direnv %d*" (cl-incf direnv--i)))
+        ;; the process is done. By using a deterministic name here we ensure
+        ;; only one instance of direnv runs at a time. This is suboptimal: it
+        ;; would be nice to have parallel direnvs for every separate directory,
+        ;; but that would require normalising which direnv roots for buffers in
+        ;; different subdirectories of the same project, which can get tricky,
+        ;; while the benefit isn’t that pronounced (just a little wait
+        ;; longer). Meanwhile, the benefit of not having a parallel direnv for
+        ;; the same directory is very clear, particularly for long-running calls
+        ;; e.g. the first time you download a nix tree.
+        (stdout-buffer " *direnv stdout*")
         (environment process-environment))
-    (cl-flet* ((on-success ()
-                 (with-current-buffer stdout-buffer
-                   (unless (= 0 (buffer-size))
-                     (goto-char (point-min))
-                     (let ((json-key-type 'string)
-                           (json-object-type 'alist))
-                       (funcall callback (json-read-object))))))
-               (on-error (exit-code)
-                 (display-warning
-                  'direnv
-                  (format-message
-                   "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
-                   exit-code
-                   (with-current-buffer direnv--output-buffer-name (buffer-string))
-                   direnv--output-buffer-name)))
-               (sentinel (proc event)
-                 (cond
-                  ((equal event "finished\n")
-                   (on-success))
-                  ((process-live-p proc)) ;; Wait
-                  (t
-                   (on-error (process-exit-status proc))))))
-      (let* ((default-directory directory)
-             (process-environment environment))
-        (make-process :name (format "direnv %s" directory)
-                      :buffer stdout-buffer
-                      :command `(,direnv--executable "export" "json")
-                      :noquery t
-                      :stderr direnv--output-buffer-name
-                      :sentinel #'sentinel)))))
+    (if (buffer-live-p (get-buffer stdout-buffer))
+        (progn
+          (message "direnv: already running, retrying %s in 1 second (see %s)"
+                   directory direnv--output-buffer-name)
+          (run-with-timer 1 nil 'direnv--export directory callback t))
+      (when retry
+        (message "direnv: retrying %s" directory))
+      ;; Create this asap to avoid a race condition
+      (get-buffer-create stdout-buffer)
+      (condition-case nil
+          (cl-flet* ((on-success ()
+                       (let* ((json-key-type 'string)
+                              (json-object-type 'alist)
+                              (res
+                               (with-current-buffer stdout-buffer
+                                 (unless (= 0 (buffer-size))
+                                   (goto-char (point-min))
+                                   (json-read-object)))))
+                         (kill-buffer stdout-buffer)
+                         (funcall callback res)))
+                     (on-error (exit-code)
+                       (kill-buffer stdout-buffer)
+                       (display-warning
+                        'direnv
+                        (format-message
+                         "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
+                         exit-code
+                         (with-current-buffer direnv--output-buffer-name (buffer-string))
+                         direnv--output-buffer-name)))
+                     (sentinel (proc event)
+                       (cond
+                        ((equal event "finished\n")
+                         (on-success))
+                        ((process-live-p proc)) ;; Wait
+                        (t
+                         (on-error (process-exit-status proc))))))
+            (let* ((default-directory directory)
+                   (process-environment environment))
+              (make-process :name (format "direnv %s" directory)
+                            :buffer stdout-buffer
+                            :command `(,direnv--executable "export" "json")
+                            :noquery t
+                            :stderr direnv--output-buffer-name
+                            :sentinel #'sentinel)))
+        ;; Just in case the ‘make-process’ call failed
+        (error (kill-buffer stdout-buffer))))))
 
 (defun direnv--file-size (name)
   "Get the file size for a file NAME."
