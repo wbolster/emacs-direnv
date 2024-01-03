@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 2.2.0
-;; Package-Requires: ((emacs "25.1") (dash "2.12.0"))
+;; Package-Requires: ((emacs "25.1") (dash "2.12.0") (project "0.9.8"))
 ;; Keywords: direnv, environment, processes, unix, tools
 ;; URL: https://github.com/wbolster/emacs-direnv
 ;;
@@ -34,6 +34,7 @@
 (require 'diff-mode)
 (require 'json)
 (require 'subr-x)
+(require 'project)
 
 (defgroup direnv nil
   "`direnv' integration for Emacs."
@@ -276,6 +277,12 @@ a summary message."
             (if (fboundp 'eshell-set-path)
                 (eshell-set-path value)
               (setq eshell-path-env value))))))))
+
+;;;###autoload
+(defun direnv-update-project ()
+  (interactive)
+  (let ((default-directory (project-root (project-current))))
+    (direnv-update-directory-environment default-directory)))
 
 ;;;###autoload
 (defun direnv-allow ()
