@@ -42,12 +42,13 @@
 
 (defun direnv--detect ()
   "Detect the direnv executable."
-  (executable-find "direnv"))
+  (or (executable-find "direnv")
+      (user-error "Could not find the direnv executable.  Is ‘exec-path’ correct?")))
 
 (defvar direnv--output-buffer-name "*direnv*"
   "Name of the buffer filled with the last direnv output.")
 
-(defvar direnv--executable (direnv--detect)
+(defvar direnv--executable (ignore-errors (direnv--detect))
   "Detected path of the direnv executable.")
 
 (defvar direnv--active-directory nil
@@ -105,8 +106,6 @@ use `default-directory', since there is no file name (or directory)."
   "Call direnv for DIRECTORY and return the parsed result."
   (unless direnv--executable
     (setq direnv--executable (direnv--detect)))
-  (unless direnv--executable
-    (user-error "Could not find the direnv executable.  Is ‘exec-path’ correct?"))
   (let ((environment process-environment)
         (stderr-tempfile (make-temp-file "direnv-stderr"))) ;; call-process needs a file for stderr output
     (unwind-protect
